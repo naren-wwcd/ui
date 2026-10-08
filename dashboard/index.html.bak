@@ -1,0 +1,1396 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Security Operations Agent</title>
+<style>
+  /* One severity scheme everywhere: low blue, medium amber, high orange, critical red. */
+  :root { --bg:#0b0f14; --panel:#131920; --panel2:#18202a; --line:#232c38; --text:#e6edf3; --muted:#8b96a5;
+          --low:#58a6ff; --med:#e3b341; --medium:#e3b341; --high:#f0883e; --crit:#f85149; --critical:#f85149; --ok:#3fb950; --accent:#58a6ff; }
+  * { box-sizing:border-box; }
+  html, body { height:100%; margin:0; }
+  body { background:var(--bg); color:var(--text); font:13px/1.45 system-ui,"Segoe UI",Roboto,sans-serif; display:flex; flex-direction:column; min-width:1100px; }
+  .muted { color:var(--muted); } .small { font-size:11px; }
+  code { background:#222a35; padding:0 4px; border-radius:3px; font-size:11px; font-family:ui-monospace,Consolas,monospace; }
+
+  /* ---- top bar ---- */
+  header { display:flex; gap:10px; align-items:center; padding:8px 14px; border-bottom:1px solid var(--line); background:var(--panel); }
+  header h1 { font-size:15px; margin:0 10px 0 0; white-space:nowrap; }
+  .spacer { flex:1; }
+  .pill { padding:2px 10px; border-radius:999px; border:1px solid var(--line); font-size:12px; white-space:nowrap; }
+  .pill.ok { color:var(--ok); border-color:var(--ok); }
+  .pill.bad { color:var(--crit); border-color:var(--crit); }
+  .pill.warn { color:var(--med); border-color:var(--med); }
+  .pill.busy { color:var(--accent); border-color:var(--accent); animation:pulse 1s infinite; }
+  @keyframes pulse { 50% { opacity:.45; } }
+  button { background:#21262d; color:var(--text); border:1px solid var(--line); padding:5px 12px; border-radius:6px; cursor:pointer; font:inherit; }
+  button:hover:not(:disabled) { border-color:var(--accent); }
+  button:disabled { opacity:.5; cursor:default; }
+  button.attack { background:#da3633; border-color:#da3633; font-weight:600; }
+  button.sim { border-color:#da3633; }
+  button.approve { background:#238636; border-color:#238636; }
+
+  /* ---- KPI strip ---- */
+  #kpis { display:grid; grid-template-columns:repeat(6,1fr); gap:10px; padding:10px 14px 0; }
+  .kpi { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:8px 14px; }
+  .kpi .num { font-size:30px; line-height:1.1; font-weight:700; font-variant-numeric:tabular-nums; transform-origin:left center; }
+  .kpi .lbl { color:var(--muted); font-size:11px; text-transform:uppercase; letter-spacing:.06em; }
+  .kpi.hot .num { color:var(--crit); }
+  .num.bump { animation:bump .4s ease-out; }
+  @keyframes bump { 0% { transform:scale(1.2); color:var(--accent); } 100% { transform:scale(1); } }
+  @media (prefers-reduced-motion: reduce) { .num.bump, .pill.busy { animation:none; } }
+
+  /* ---- tabs ---- */
+  nav { display:flex; gap:2px; padding:10px 14px 0; border-bottom:1px solid var(--line); margin-top:10px; }
+  nav button { border:0; border-bottom:2px solid transparent; border-radius:6px 6px 0 0; background:none; color:var(--muted); padding:7px 16px; font-weight:600; }
+  nav button.on { color:var(--text); border-bottom-color:var(--accent); background:var(--panel); }
+  nav .badge { background:#2b3441; color:var(--text); border-radius:999px; padding:0 7px; margin-left:6px; font-size:11px; }
+  nav .badge.hot { background:var(--crit); color:#0b0f14; }
+  nav .badge:empty { display:none; }
+
+  /* ---- layout ---- */
+  main { flex:1; min-height:0; position:relative; }
+  .tab { position:absolute; inset:0; padding:10px 14px; gap:10px; }
+  [hidden] { display:none !important; }   /* ID rules such as #tab-actions { display:flex } would otherwise beat the hidden attribute */
+  #tab-overview { display:flex; flex-direction:column; }
+  #ov-top { display:grid; grid-template-columns:1.3fr 1.1fr 1.1fr 1.4fr; gap:10px; height:185px; min-height:185px; flex-shrink:0; }
+  #ov-bottom { display:grid; grid-template-columns:430px 1fr; gap:10px; flex:1; min-height:0; }
+  .chart-box { padding:8px 10px; flex:1; min-height:0; position:relative; }
+  .chart-list { display:flex; flex-direction:column; gap:6px; }
+  .hbar-row { display:flex; flex-direction:column; gap:2px; font-size:11px; }
+  .hbar-label-wrap { display:flex; justify-content:space-between; align-items:center; }
+  .hbar-name { font-weight:500; color:var(--text); font-family:ui-monospace,Consolas,monospace; font-size:11px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .hbar-count { color:var(--muted); font-size:11px; font-variant-numeric:tabular-nums; }
+  .donut-wrap { display:flex; gap:14px; align-items:center; justify-content:center; height:100%; }
+  .donut-legend { display:flex; flex-direction:column; gap:4px; font-size:11px; }
+  .donut-leg-row { display:flex; align-items:center; gap:6px; }
+  .donut-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .donut-leg-lbl { color:var(--muted); text-transform:capitalize; width:52px; }
+  .donut-leg-val { font-weight:600; color:var(--text); font-variant-numeric:tabular-nums; }
+  .top-split { display:grid; grid-template-columns:1fr 1fr; gap:10px; height:100%; }
+  .top-col { display:flex; flex-direction:column; min-width:0; }
+  .top-subhdr { font-size:10px; text-transform:uppercase; letter-spacing:.05em; color:var(--muted); margin-bottom:4px; font-weight:600; }
+  .top-list { display:flex; flex-direction:column; gap:4px; }
+  .ranked-row { display:flex; align-items:center; gap:6px; font-size:11px; }
+  .ranked-idx { color:var(--muted); font-size:10px; width:10px; text-align:right; flex-shrink:0; }
+  .ranked-key { font-family:ui-monospace,Consolas,monospace; font-size:11px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; flex:1; min-width:0; }
+  .ranked-bar { width:36px; flex-shrink:0; }
+  .ranked-cnt { color:var(--muted); font-size:10px; min-width:18px; text-align:right; flex-shrink:0; font-variant-numeric:tabular-nums; }
+  .empty-mini { color:var(--muted); font-size:11px; padding:16px 4px; text-align:center; }
+
+  /* kill chain horizontal strip */
+  .kc-strip { display:flex; gap:6px; margin:8px 0 14px; align-items:stretch; }
+  .kc-step { flex:1; min-width:0; padding:8px 6px; border-radius:6px; border:1px solid var(--line); background:var(--panel2); display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; gap:4px; }
+  .kc-step.dim { opacity:.4; }
+  .kc-step.reached { border-color:var(--accent); background:#142233; }
+  .kc-step.furthest { border-color:var(--crit); background:#28161a; box-shadow:0 0 6px rgba(248,81,73,.3); }
+  .kc-title { font-size:11px; font-weight:600; line-height:1.2; }
+  .kc-status { display:flex; gap:4px; align-items:center; font-size:10px; }
+  .kc-count { background:var(--accent); color:#0b0f14; font-weight:700; border-radius:999px; padding:0 6px; }
+  .kc-step.furthest .kc-count { background:var(--crit); color:#fff; }
+  .kc-badge { background:var(--crit); color:#fff; font-size:9px; font-weight:700; padding:0 4px; border-radius:3px; letter-spacing:.05em; }
+  .kc-none { color:var(--muted); }
+
+  #tab-incidents { display:grid; grid-template-columns:400px 1fr; }
+  #tab-actions { display:flex; flex-direction:column; }
+  section { background:var(--panel); border:1px solid var(--line); border-radius:8px; display:flex; flex-direction:column; min-height:0; min-width:0; }
+  section > h2 { margin:0; padding:8px 12px; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); border-bottom:1px solid var(--line); }
+  .scroll { overflow:auto; flex:1; min-height:0; }
+  .empty { padding:22px 14px; color:var(--muted); text-align:center; }
+
+  /* severity colours (backgrounds for badges, text for tags) */
+  .critical { background:var(--crit); } .high { background:var(--high); } .medium { background:var(--med); } .low { background:var(--low); }
+  .risk, .tag { color:#0b0f14; }
+  .risk { min-width:42px; text-align:center; padding:4px 0; border-radius:6px; font-weight:700; font-variant-numeric:tabular-nums; }
+  .tag { padding:1px 7px; border-radius:4px; font-size:11px; font-weight:600; white-space:nowrap; display:inline-block; }
+  .chip { display:inline-block; padding:0 6px; margin:2px 4px 0 0; border-radius:4px; background:#222a35; font-size:11px; color:#c9d1d9; }
+  .v-true_positive { background:var(--crit); } .v-false_positive { background:var(--ok); } .v-needs_review { background:#a371f7; }
+  .st-executed { background:var(--ok); } .st-verified { background:var(--ok); } .st-verification_failed { background:var(--crit); }
+  .st-failed { background:var(--crit); } .st-rejected { background:#6e7681; } .st-withdrawn { background:#a371f7; }
+  .st-pending_approval { background:var(--med); } .st-approved { background:#3fb950; } .st-queued { background:#a371f7; } .st-executing { background:var(--accent); } .st-unknown { background:#6e7681; }
+
+  /* incident rows */
+  .inc { padding:8px 12px; border-bottom:1px solid var(--line); cursor:pointer; display:flex; gap:10px; align-items:center; border-left:3px solid transparent; }
+  .inc:hover, .inc.sel { background:var(--panel2); }
+  .inc.sel { border-left-color:var(--accent); }
+  .inc.closed { opacity:.45; filter:grayscale(40%); }
+  .inc .body { min-width:0; flex:1; }
+  .pill.busy.mini { font-size:10px; padding:0 7px; }
+
+  /* live feed */
+  .row { padding:2px 12px; border-bottom:1px solid #1a212b; font-family:ui-monospace,Consolas,monospace; font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; border-left:3px solid transparent; }
+  .row.attack { background:#2e1518; color:#ffb3ae; }
+  .row.fail { color:var(--med); }
+  .row.collector { color:#79c0ff; }
+  .row.alert { background:#2f2410; color:#ffd479; font-weight:600; white-space:normal; }
+  .row.alert.s-critical { border-left-color:var(--crit); } .row.alert.s-high { border-left-color:var(--high); }
+  .row.alert.s-medium { border-left-color:var(--med); } .row.alert.s-low { border-left-color:var(--low); }
+
+  /* live feed filters */
+  #feed.feed-filter-alerts .row:not(.alert) { display:none !important; }
+  #feed.feed-filter-src-traffic_gen .row[data-kind="event"]:not(.src-traffic_gen) { display:none !important; }
+  #feed.feed-filter-src-attack_injector .row[data-kind="event"]:not(.src-attack_injector) { display:none !important; }
+  #feed.feed-filter-src-system_collector .row[data-kind="event"]:not(.src-system_collector) { display:none !important; }
+  #feed.feed-filter-src-cloudtrail .row[data-kind="event"]:not(.src-cloudtrail) { display:none !important; }
+
+  /* detail */
+  .detail { padding:12px 14px; }
+  .detail h3 { margin:16px 0 6px; font-size:12px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); }
+  .riskrow { display:flex; gap:12px; align-items:center; }
+  .riskrow .risk { font-size:24px; min-width:64px; padding:10px 0; }
+  .tl { border-left:2px solid var(--line); margin-left:6px; }
+  .tl > div { padding:3px 0 6px 12px; position:relative; }
+  .tl > div::before { content:""; position:absolute; left:-6px; top:9px; width:10px; height:10px; border-radius:50%; background:var(--accent); }
+
+  /* actions */
+  .act { display:flex; gap:10px; align-items:center; padding:8px 12px; border-bottom:1px solid var(--line); }
+  .act .grow { flex:1; min-width:0; }
+  .card { display:flex; gap:12px; align-items:center; padding:10px 12px; margin:8px 10px 0; border:1px solid var(--med); border-left-width:4px; border-radius:8px; background:var(--panel2); }
+  .card .grow { flex:1; min-width:0; }
+  .card:last-child { margin-bottom:10px; }
+
+  /* audit */
+  .arow { display:grid; grid-template-columns:70px 80px 190px 100px 1fr; gap:10px; padding:3px 12px; border-bottom:1px solid #1a212b; font-size:12px; }
+  .arow > * { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .arow .d { white-space:normal; }
+
+  /* toasts */
+  #toasts { position:fixed; right:16px; bottom:16px; display:flex; flex-direction:column; gap:8px; z-index:10; max-width:380px; }
+  .toast { background:#1c232d; border:1px solid var(--line); border-left:4px solid var(--accent); padding:9px 14px; border-radius:8px; box-shadow:0 4px 14px #0008; }
+  .toast.critical { border-left-color:var(--crit); } .toast.high { border-left-color:var(--high); }
+  .toast.medium { border-left-color:var(--med); } .toast.low { border-left-color:var(--low); }
+
+  /* pipeline strip in response center */
+  .pipe-strip { display:flex; align-items:center; gap:4px; margin-top:8px; padding:6px 8px; background:#0b0f14; border:1px solid var(--line); border-radius:6px; font-size:11px; }
+  .pipe-step { display:flex; flex-direction:column; gap:2px; flex:1; min-width:0; padding:4px 6px; border-radius:4px; border:1px solid #1e2633; background:#141a22; }
+  .pipe-step.is-done { border-color:#2ea043; background:#122318; }
+  .pipe-step.is-active { border-color:var(--accent); background:#142233; }
+  .pipe-step.is-waiting { border-color:#222a35; background:#0f141c; opacity:.6; }
+  .pipe-step.is-pending { border-color:var(--med); background:#272013; }
+  .pipe-step.is-failed { border-color:var(--crit); background:#2e1518; }
+  .pipe-arrow { color:var(--muted); font-size:11px; flex-shrink:0; font-weight:700; }
+  .pipe-hdr { font-weight:700; font-size:10px; text-transform:uppercase; letter-spacing:.04em; display:flex; align-items:center; justify-content:space-between; }
+  .pipe-sub { font-size:10px; color:var(--muted); font-family:ui-monospace,Consolas,monospace; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+  /* Presentation mode */
+  body.presentation-mode { font-size:15px; }
+  body.presentation-mode .kpi .num { font-size:42px; }
+  body.presentation-mode .kpi .lbl { font-size:12px; }
+  body.presentation-mode section > h2 { font-size:14px; }
+  body.presentation-mode #ov-bottom { grid-template-columns:1fr !important; }
+  body.presentation-mode #ov-bottom > section:nth-child(2) { display:none !important; }
+</style>
+</head>
+<body>
+<header>
+  <h1>🛡 Security Operations Agent</h1>
+  <span class="pill warn" style="font-weight:700;font-size:10px;letter-spacing:.06em;">SIMULATION</span>
+  <span id="rpa" class="pill warn" title="online if a bot claimed something in the last 60 s">RPA: builtin fallback</span>
+  <span id="ws" class="pill bad">connecting...</span>
+  <span id="agent" class="pill ok">Agent: idle</span>
+  <span id="llm" class="pill" title="LLM source of the latest investigation">LLM: -</span>
+  <span class="muted small">queue <span id="queue">0</span> · dropped <span id="dropped">0</span></span>
+  <span class="spacer"></span>
+  <button id="btn-pres" style="font-size:12px;">📽 Presentation</button>
+  <button id="attack" class="attack">⚡ Launch attack</button>
+  <button class="sim" data-sim="/simulate/spray">💧 Launch password spray</button>
+  <button class="sim" data-sim="/simulate/cloud-attack">☁ Launch cloud attack</button>
+</header>
+
+<div id="kpis">
+  <div class="kpi"><div class="num" id="k-eps">0</div><div class="lbl">events / sec</div></div>
+  <div class="kpi"><div class="num" id="k-events">0</div><div class="lbl">total events</div></div>
+  <div class="kpi"><div class="num" id="k-active">0</div><div class="lbl">active incidents</div></div>
+  <div class="kpi" id="kpi-crit"><div class="num" id="k-crit">0</div><div class="lbl">critical incidents</div></div>
+  <div class="kpi"><div class="num" id="k-alerts">0</div><div class="lbl">alerts</div></div>
+  <div class="kpi"><div class="num" id="k-pending">0</div><div class="lbl">pending approvals</div></div>
+</div>
+
+<nav id="tabs">
+  <button data-tab="overview" class="on">Overview</button>
+  <button data-tab="incidents">Incidents <span class="badge" id="b-inc"></span></button>
+  <button data-tab="actions">Actions <span class="badge hot" id="b-act"></span></button>
+  <button data-tab="audit">Audit</button>
+</nav>
+
+<main>
+  <div class="tab" id="tab-overview">
+    <div id="ov-top">
+      <section><h2>Events / sec (60s)</h2><div id="chartEps" class="chart-box"></div></section>
+      <section><h2>Alerts by type</h2><div id="chartAlerts" class="chart-box scroll"></div></section>
+      <section><h2>Incidents by severity</h2><div id="chartIncidents" class="chart-box"></div></section>
+      <section><h2>Top sources &amp; countries</h2><div id="topEntities" class="chart-box scroll"></div></section>
+    </div>
+    <div id="ov-bottom">
+      <section><h2>Incidents by risk</h2><div id="ovInc" class="scroll"></div></section>
+      <section style="display:flex;flex-direction:column;min-height:0;">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--line);flex-shrink:0;">
+          <h2 style="border-bottom:none;padding:0;margin:0;">Live events</h2>
+          <div style="display:flex;align-items:center;gap:10px;font-size:11px;">
+            <label style="display:flex;align-items:center;gap:4px;color:var(--muted);cursor:pointer;user-select:none;">
+              <input type="checkbox" id="feedAlertsOnly" style="cursor:pointer;margin:0;"> Alerts only
+            </label>
+            <select id="feedSourceSelect" style="background:#21262d;color:var(--text);border:1px solid var(--line);border-radius:4px;padding:2px 6px;font:inherit;font-size:11px;cursor:pointer;">
+              <option value="all">All sources</option>
+              <option value="traffic_gen">traffic_gen</option>
+              <option value="attack_injector">attack_injector</option>
+              <option value="system_collector">system_collector</option>
+              <option value="cloudtrail">cloudtrail</option>
+            </select>
+          </div>
+        </div>
+        <div id="feedEmpty" class="empty">Waiting for events...</div>
+        <div id="feed" class="scroll"></div>
+      </section>
+    </div>
+  </div>
+  <div class="tab" id="tab-incidents" hidden>
+    <section><h2>Incidents</h2><div id="incList" class="scroll"></div></section>
+    <section><h2>Incident detail</h2><div id="detail" class="scroll"></div></section>
+  </div>
+  <div class="tab" id="tab-actions" hidden>
+    <section style="height:100%;display:flex;flex-direction:column;min-height:0;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-bottom:1px solid var(--line);background:var(--panel);flex-shrink:0;">
+        <h2 style="border:0;padding:0;margin:0;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--text);font-weight:700;">Response Center</h2>
+        <span class="muted small">Pipeline: <b>ACTION</b> &rarr; <b>QUEUED</b> &rarr; <b>EXECUTION</b> &rarr; <b>VERIFICATION</b></span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:12px;flex:1;min-height:0;">
+        <!-- Group: REQUIRES APPROVAL -->
+        <div style="display:flex;flex-direction:column;background:var(--panel2);border:1px solid var(--line);border-radius:8px;min-height:0;overflow:hidden;">
+          <div style="padding:8px 12px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;background:#1d1810;">
+            <span style="font-weight:700;font-size:11px;color:var(--med);letter-spacing:.06em;">REQUIRES APPROVAL</span>
+            <span id="badge-approval" class="tag" style="background:var(--med);color:#0b0f14;font-size:10px;font-weight:700;">0</span>
+          </div>
+          <div id="group-approval" class="scroll" style="padding:8px;flex:1;"></div>
+        </div>
+
+        <!-- Group: AUTO EXECUTE -->
+        <div style="display:flex;flex-direction:column;background:var(--panel2);border:1px solid var(--line);border-radius:8px;min-height:0;overflow:hidden;">
+          <div style="padding:8px 12px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;background:#101a24;">
+            <span style="font-weight:700;font-size:11px;color:var(--accent);letter-spacing:.06em;">AUTO EXECUTE</span>
+            <span id="badge-auto" class="tag" style="background:var(--accent);color:#0b0f14;font-size:10px;font-weight:700;">0</span>
+          </div>
+          <div id="group-auto" class="scroll" style="padding:8px;flex:1;"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="tab" id="tab-audit" hidden>
+    <section style="height:100%;display:flex;flex-direction:column;min-height:0;">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;border-bottom:1px solid var(--line);flex-shrink:0;gap:10px;flex-wrap:wrap;background:var(--panel);">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <h2 style="border:0;padding:0;margin:0;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);">Audit log (tamper-evident)</h2>
+          <span id="audit-integrity" class="pill" title="Cryptographic tamper-evident hash chain">Integrity: checking...</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:11px;">
+          <label style="color:var(--muted);">Incident:</label>
+          <select id="audit-filter-inc" style="background:#21262d;color:var(--text);border:1px solid var(--line);border-radius:4px;padding:2px 8px;font:inherit;font-size:11px;cursor:pointer;">
+            <option value="">All incidents</option>
+          </select>
+          <label style="color:var(--muted);margin-left:6px;">Action:</label>
+          <select id="audit-filter-act" style="background:#21262d;color:var(--text);border:1px solid var(--line);border-radius:4px;padding:2px 8px;font:inherit;font-size:11px;cursor:pointer;">
+            <option value="">All actions</option>
+          </select>
+        </div>
+      </div>
+      <div id="audit" class="scroll"></div>
+    </section>
+  </div>
+</main>
+<footer style="padding:5px 14px;border-top:1px solid var(--line);background:var(--panel);color:var(--muted);font-size:11px;text-align:center;flex-shrink:0;">
+  All traffic, threat intelligence and response actions are simulated. Blocking, disabling and isolating only change simulated state.
+</footer>
+<div id="toasts"></div>
+
+<script>
+"use strict";
+// ---------- state & helpers ----------
+const S = { incidents: {}, actions: {}, selected: null, investigating: [], stats: {}, tab: "overview", auditSig: "", confirmingAction: null, auditRows: [] };
+const FEED_MAX = 200;
+const SEV = { low: 1, medium: 2, high: 3, critical: 4 };
+const $ = id => document.getElementById(id);
+// Event fields come from logs (attacker-controlled!), so EVERYTHING dynamic goes through esc().
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const hms = ts => new Date(ts * 1000).toLocaleTimeString([], { hour12: false });
+const human = n => n >= 1e9 ? (n/1e9).toFixed(1)+" GB" : n >= 1e6 ? (n/1e6).toFixed(1)+" MB" : n >= 1e3 ? (n/1e3).toFixed(0)+" KB" : n + " B";
+const lvl = x => Object.hasOwn(SEV, x) ? x : "low";                                   // class names only come from a whitelist
+const STATUS_CLS = { executed:1, verified:1, verification_failed:1, failed:1, rejected:1, withdrawn:1, pending_approval:1, approved:1, queued:1, executing:1 };
+const riskScore = i => (i && i.risk && Number.isFinite(i.risk.score)) ? i.risk.score : null;
+const isClosed = i => i.status === "closed";
+// A rejected action whose decider is "superseded" was withdrawn by a newer investigation.
+const actStatus = a => a.status === "rejected" && a.decided_by === "superseded" ? "withdrawn" : a.status;
+
+// ---------- toasts (keyed: a repeat for the same key updates the visible toast instead of stacking) ----------
+const toastEls = {};
+function toast(msg, level, key) {
+  let el = key && toastEls[key];
+  if (!el) {
+    el = document.createElement("div");
+    $("toasts").appendChild(el);
+    if (key) toastEls[key] = el;
+    while ($("toasts").childElementCount > 5) $("toasts").firstChild.remove();
+  }
+  el.className = "toast " + (Object.hasOwn(SEV, level) ? level : "");
+  el.textContent = msg;                                                     // textContent: never parsed as HTML
+  clearTimeout(el._h);
+  el._h = setTimeout(() => { el.remove(); if (key && toastEls[key] === el) delete toastEls[key]; }, 6000);
+}
+
+// ---------- render scheduling: mark panels dirty, repaint once per frame, only for the visible tab ----------
+const PANEL_TAB = { ovCharts: "overview", ovInc: "overview", incList: "incidents", detail: "incidents", actions: "actions", pending: "actions", history: "actions" };
+const dirty = new Set(); let raf = 0;
+function mark(...names) { names.forEach(n => dirty.add(n)); if (!raf) raf = requestAnimationFrame(() => { raf = 0; flush(); }); }
+function flush() {
+  for (const n of [...dirty]) {
+    if (PANEL_TAB[n] && PANEL_TAB[n] !== S.tab) continue;                   // hidden tab: stays dirty until shown
+    dirty.delete(n); RENDER[n]();
+  }
+}
+
+// ---------- KPI strip ----------
+function setNum(id, v) {
+  const el = $(id), t = typeof v === "number" ? v.toLocaleString() : String(v);
+  if (el.textContent === t) return;
+  el.textContent = t;
+  el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump");   // restart the short highlight animation
+}
+function renderKpi() {
+  const incs = Object.values(S.incidents).filter(i => !isClosed(i));
+  const crit = incs.filter(i => i.severity === "critical").length;
+  const pend = Object.values(S.actions).filter(a => a.status === "pending_approval").length;
+  setNum("k-eps", S.stats.eps ?? 0); setNum("k-events", S.stats.stored ?? 0);
+  setNum("k-active", incs.length); setNum("k-crit", crit);
+  setNum("k-alerts", S.stats.alerts_total ?? 0); setNum("k-pending", pend);
+  $("kpi-crit").classList.toggle("hot", crit > 0);
+  $("queue").textContent = S.stats.queue ?? 0; $("dropped").textContent = S.stats.dropped ?? 0;
+  $("b-inc").textContent = incs.length || ""; $("b-act").textContent = pend || "";
+  $("b-act").classList.toggle("hot", pend > 0);
+  const rpaEl = $("rpa");
+  if (rpaEl) {
+    const botOnline = !!S.stats.rpa_bot_online;
+    rpaEl.className = "pill " + (botOnline ? "ok" : "warn");
+    rpaEl.textContent = botOnline ? "RPA: uipath online" : "RPA: builtin fallback";
+  }
+}
+function renderAgent() {
+  const el = $("agent");
+  if (S.investigating.length) { el.className = "pill busy"; el.textContent = "Agent: investigating..."; el.title = S.investigating.join(", "); }
+  else { el.className = "pill ok"; el.textContent = "Agent: idle"; el.title = ""; }
+  // LLM source of the most recent investigation (gemini / claude / fallback)
+  let best = null;
+  for (const i of Object.values(S.incidents)) if (i.investigation && (!best || i.investigation.investigated_at > best.investigated_at)) best = i.investigation;
+  const l = $("llm");
+  if (!best) { l.className = "pill"; l.textContent = "LLM: -"; l.title = "no investigation yet"; return; }
+  l.className = "pill " + (best.source === "fallback" ? "warn" : "ok");
+  l.textContent = "LLM: " + best.source;
+  l.title = best.source === "fallback" ? "cached fallback: " + (best.fallback_reason || "") : (best.model || "");
+}
+
+// ---------- live feed ----------
+function addFeedRow(html, cls, kind, source) {
+  const d = document.createElement("div");
+  d.className = "row " + cls;
+  d.dataset.kind = kind || "event";
+  if (source) d.dataset.source = source;
+  d.innerHTML = html;                           // html is built only from esc()'d values
+  const feed = $("feed"); feed.insertBefore(d, feed.firstChild);
+  $("feedEmpty").hidden = true;
+  while (feed.childElementCount > FEED_MAX) feed.lastChild.remove();
+}
+function addEvent(e) {
+  const src = e.source || "unknown";
+  const srcCls = "src-" + src;
+  const cls = (e.source === "attack_injector" ? "attack " : e.action === "login_failed" ? "fail " : e.source === "system_collector" || e.source === "cloudtrail" ? "collector " : "") + srcCls;
+  addFeedRow(`${hms(e.ts)}  ${esc(e.source)}  ${esc(e.user || "-")}  ${esc(e.ip || "-")} ${esc(e.country || "")}  ${esc(e.host || "")}  ${esc(e.action)}  ${human(e.bytes || 0)}`, cls, "event", e.source);
+}
+function addAlert(a) {
+  addFeedRow(`🚨 ${hms(a.ts)} ALERT [${esc(a.severity)}] ${esc(a.type)} — ${esc(a.entity)} — ${esc(a.detail)}`, "alert s-" + lvl(a.severity), "alert", "");
+}
+
+// ---------- incident list (used by Overview and Incidents tab) ----------
+function sortedIncidents() {
+  return Object.values(S.incidents).sort((a, b) =>
+    (isClosed(a) - isClosed(b)) || ((riskScore(b) ?? -1) - (riskScore(a) ?? -1)) || (b.updated_ts - a.updated_ts));
+}
+const EMPTY_INC = '<div class="empty">No incidents yet - monitoring<div class="small">Use a scenario button above to simulate an attack.</div></div>';
+function incHtml(list) {
+  return list.length ? list.map(i => {
+    const r = i.risk || { score: "…", level: "low" }, busy = S.investigating.includes(i.id);
+    const types = i.alert_types.slice(0, 4).map(t => `<span class="chip">${esc(t)}</span>`).join("") + (i.alert_types.length > 4 ? `<span class="chip">+${i.alert_types.length - 4}</span>` : "");
+    const fb = i.feedback;
+    const fbTag = fb ? `<span class="tag ${fb.label === 'false_positive' ? 'v-false_positive' : 'v-true_positive'}" style="font-size:10px;padding:0 5px;font-weight:700;">${esc(fb.label === 'false_positive' ? 'FP' : 'CONFIRMED')}</span>` : '';
+    return `<div class="inc ${i.id === S.selected ? "sel" : ""} ${isClosed(i) ? "closed" : ""}" data-id="${esc(i.id)}">
+      <div class="risk ${lvl(r.level)}" title="risk score">${esc(r.score)}</div>
+      <div class="body"><b>${esc(i.id)}</b> <span class="tag ${lvl(i.severity)}">${esc(i.severity)}</span>
+        <span class="chip">${esc(i.status)}</span>
+        ${fbTag}
+        <span class="muted small">${hms(i.updated_ts)}</span> ${busy ? '<span class="pill busy mini">investigating...</span>' : ""}
+        <div>${types}</div></div></div>`;
+  }).join("") : EMPTY_INC;
+}
+
+// ---------- actions ----------
+function actionButtons(a) {
+  const st = actStatus(a);
+  if (st !== "pending_approval") {
+    return `<span class="tag st-${Object.hasOwn(STATUS_CLS, st) ? st : "unknown"}">${esc(st)}</span>`;
+  }
+  const needsConfirm = (a.type === "isolate_host" || a.type === "disable_user");
+  const isConfirming = S.confirmingAction === a.id;
+  if (isConfirming) {
+    return `<div style="display:flex;gap:6px;align-items:center;">
+      <span style="color:var(--crit);font-weight:600;font-size:11px;">Confirm ${esc(a.type)}?</span>
+      <button class="approve" data-act="approve" data-id="${esc(a.id)}" data-confirmed="1">Yes, approve</button>
+      <button data-act="cancel-confirm" data-id="${esc(a.id)}">Cancel</button>
+    </div>`;
+  }
+  return `<div style="display:flex;gap:6px;align-items:center;">
+    <button class="approve" data-act="approve" data-id="${esc(a.id)}" ${needsConfirm ? 'data-needs-confirm="1"' : ''}>Approve</button>
+    <button data-act="reject" data-id="${esc(a.id)}">Reject</button>
+  </div>`;
+}
+
+// ---------- entity graph ----------
+function buildEntityGraphSvg(inc) {
+  if (!inc) return "";
+  const nodesMap = new Map();
+  const edges = new Set();
+  const attackIps = new Set();
+
+  (inc.timeline || []).forEach(t => {
+    const isAtk = ["brute_force", "password_spraying", "new_country_login", "impossible_travel"].includes(t.type);
+    if (isAtk) {
+      if (t.entity && t.entity.startsWith("ip:")) attackIps.add(t.entity.slice(3));
+      const ipMatches = (t.detail || "").match(/\b(?:\d{1,3}\.){3}\d{1,3}\b/g);
+      if (ipMatches) ipMatches.forEach(ip => attackIps.add(ip));
+    }
+  });
+
+  (inc.entities || []).forEach(e => {
+    if (e.startsWith("ip:")) {
+      const ip = e.slice(3);
+      if (attackIps.has(ip) || (inc.alert_types && (inc.alert_types.includes("brute_force") || inc.alert_types.includes("new_country_login") || inc.alert_types.includes("impossible_travel")))) {
+        attackIps.add(ip);
+      }
+    }
+  });
+
+  (inc.entities || []).forEach(e => {
+    const colon = e.indexOf(":");
+    if (colon > 0) {
+      const type = e.slice(0, colon);
+      const val = e.slice(colon + 1);
+      nodesMap.set(e, { id: e, type: type, label: val, full: e, isAttacker: type === "ip" && attackIps.has(val) });
+    }
+  });
+
+  (inc.timeline || []).forEach(t => {
+    if (t.entity && t.entity.includes(":")) {
+      const colon = t.entity.indexOf(":");
+      const type = t.entity.slice(0, colon);
+      const val = t.entity.slice(colon + 1);
+      if (!nodesMap.has(t.entity)) {
+        nodesMap.set(t.entity, { id: t.entity, type: type, label: val, full: t.entity, isAttacker: type === "ip" && attackIps.has(val) });
+      }
+    }
+    const hostMatches = (t.detail || "").match(/\b(web-\d+|db-\d+|app-\d+|file-\d+|srv-\d+|s3:[a-zA-Z0-9_.-]+|iam:[a-zA-Z0-9_.-]+|cloudtrail:[a-zA-Z0-9_.-]+)\b/g);
+    if (hostMatches) {
+      hostMatches.forEach(h => {
+        const id = "host:" + h;
+        if (!nodesMap.has(id)) nodesMap.set(id, { id: id, type: "host", label: h, full: id, isAttacker: false });
+      });
+    }
+    const ipMatches = (t.detail || "").match(/\b(?:\d{1,3}\.){3}\d{1,3}\b/g);
+    if (ipMatches) {
+      ipMatches.forEach(ip => {
+        const id = "ip:" + ip;
+        if (!nodesMap.has(id)) nodesMap.set(id, { id: id, type: "ip", label: ip, full: id, isAttacker: attackIps.has(ip) });
+      });
+    }
+  });
+
+  Object.values(S.actions || {}).forEach(a => {
+    if (a.incident_id === inc.id) {
+      if (a.type === "block_ip") {
+        const id = "ip:" + a.target;
+        if (!nodesMap.has(id)) nodesMap.set(id, { id: id, type: "ip", label: a.target, full: id, isAttacker: true });
+        else nodesMap.get(id).isAttacker = true;
+      } else if (a.type === "isolate_host") {
+        const id = "host:" + a.target;
+        if (!nodesMap.has(id)) nodesMap.set(id, { id: id, type: "host", label: a.target, full: id, isAttacker: false });
+      } else if (a.type === "disable_user" || a.type === "revoke_sessions") {
+        const id = "user:" + a.target;
+        if (!nodesMap.has(id)) nodesMap.set(id, { id: id, type: "user", label: a.target, full: id, isAttacker: false });
+      }
+    }
+  });
+
+  if (nodesMap.size === 0) {
+    return '<div class="muted small" style="padding:10px 0;">No entity nodes in this incident.</div>';
+  }
+
+  (inc.timeline || []).forEach(t => {
+    const alertNodes = [];
+    if (t.entity && nodesMap.has(t.entity)) alertNodes.push(t.entity);
+    nodesMap.forEach(n => {
+      if (!alertNodes.includes(n.id) && (t.detail || "").includes(n.label)) {
+        alertNodes.push(n.id);
+      }
+    });
+    for (let j = 0; j < alertNodes.length; j++) {
+      for (let k = j + 1; k < alertNodes.length; k++) {
+        edges.add([alertNodes[j], alertNodes[k]].sort().join("--"));
+      }
+    }
+  });
+
+  const users = [...nodesMap.values()].filter(n => n.type === "user");
+  const ips = [...nodesMap.values()].filter(n => n.type === "ip");
+  const hosts = [...nodesMap.values()].filter(n => n.type === "host");
+
+  if (edges.size === 0) {
+    ips.forEach(ip => users.forEach(u => edges.add([ip.id, u.id].sort().join("--"))));
+    users.forEach(u => hosts.forEach(h => edges.add([u.id, h.id].sort().join("--"))));
+  } else {
+    const connected = new Set();
+    edges.forEach(e => { const [a, b] = e.split("--"); connected.add(a); connected.add(b); });
+    nodesMap.forEach(n => {
+      if (!connected.has(n.id) && users.length > 0 && n.type !== "user") {
+        edges.add([n.id, users[0].id].sort().join("--"));
+      }
+    });
+  }
+
+  const cols = [];
+  if (ips.length) cols.push({ type: "ip", nodes: ips });
+  if (users.length) cols.push({ type: "user", nodes: users });
+  if (hosts.length) cols.push({ type: "host", nodes: hosts });
+
+  const W = 460, H = 160;
+  const numCols = cols.length || 1;
+  cols.forEach((c, colIdx) => {
+    const cx = numCols === 1 ? W / 2 : 75 + colIdx * ((W - 150) / (numCols - 1));
+    const k = c.nodes.length;
+    c.nodes.forEach((n, idx) => {
+      n.x = Math.round(cx);
+      n.y = k === 1 ? Math.round(H / 2) : Math.round(35 + idx * ((H - 65) / (k - 1)));
+    });
+  });
+
+  let linesSvg = "";
+  edges.forEach(e => {
+    const [id1, id2] = e.split("--");
+    const n1 = nodesMap.get(id1);
+    const n2 = nodesMap.get(id2);
+    if (n1 && n2) {
+      linesSvg += `<line x1="${n1.x}" y1="${n1.y}" x2="${n2.x}" y2="${n2.y}" stroke="#303c4e" stroke-width="1.5"/>`;
+    }
+  });
+
+  let nodesSvg = "";
+  nodesMap.forEach(n => {
+    const strokeColor = n.isAttacker ? "var(--crit)" : n.type === "user" ? "var(--accent)" : n.type === "host" ? "var(--ok)" : "var(--muted)";
+    const fillColor = n.isAttacker ? "#381a1c" : n.type === "user" ? "#162335" : n.type === "host" ? "#14251a" : "#1b2330";
+    const letter = n.type === "user" ? "U" : n.type === "ip" ? "IP" : "H";
+    const truncLabel = n.label.length > 9 ? n.label.slice(0, 8) + "…" : n.label;
+
+    nodesSvg += `<g class="graph-node" style="cursor:pointer;">
+      <title>${esc(n.full)} (${esc(n.type)}${n.isAttacker ? ", ATTACK SOURCE" : ""})</title>
+      <circle cx="${n.x}" cy="${n.y}" r="14" fill="${fillColor}" stroke="${strokeColor}" stroke-width="2"/>
+      <text x="${n.x}" y="${n.y + 4}" text-anchor="middle" font-size="10" font-weight="700" fill="${strokeColor}">${esc(letter)}</text>
+      <text x="${n.x}" y="${n.y + 24}" text-anchor="middle" font-size="10" font-family="ui-monospace,Consolas,monospace" fill="${n.isAttacker ? 'var(--crit)' : 'var(--text)'}">${esc(truncLabel)}</text>
+    </g>`;
+  });
+
+  return `<div style="background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:6px;margin:8px 0 14px;">
+    <svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" style="display:block;">
+      <text x="10" y="15" font-size="9" fill="var(--muted)">ENTITY GRAPH · <tspan fill="var(--crit)">● Attack IP</tspan> · <tspan fill="var(--accent)">● User</tspan> · <tspan fill="var(--ok)">● Host</tspan></text>
+      ${linesSvg}
+      ${nodesSvg}
+    </svg>
+  </div>`;
+}
+
+// ---------- detail ----------
+function renderDetail() {
+  const box = $("detail"), keep = box.scrollTop;
+  const i = S.incidents[S.selected];
+  if (!i) { box.innerHTML = '<div class="empty">Select an incident</div>'; return; }
+  const r = i.risk || { score: "…", level: "low", justification: "", final: false };
+  const inv = i.investigation;
+
+  // Circular gauge (0-100, coloured by risk level) next to justification text
+  const numScore = Number(r.score);
+  const scoreVal = Number.isFinite(numScore) ? Math.min(100, Math.max(0, numScore)) : 0;
+  const gaugeR = 24, gaugeC = 2 * Math.PI * gaugeR;
+  const gaugeDash = (scoreVal / 100) * gaugeC;
+  const gaugeColor = `var(--${lvl(r.level)})`;
+
+  const gaugeSvg = `<svg width="58" height="58" viewBox="0 0 58 58" style="flex-shrink:0" class="risk-gauge">
+    <circle cx="29" cy="29" r="${gaugeR}" stroke="#222a35" stroke-width="5" fill="none"/>
+    <g transform="rotate(-90 29 29)">
+      <circle cx="29" cy="29" r="${gaugeR}" stroke="${gaugeColor}" stroke-width="5" fill="none"
+              stroke-dasharray="${gaugeDash.toFixed(1)} ${(gaugeC - gaugeDash).toFixed(1)}" stroke-linecap="round"/>
+    </g>
+    <text x="29" y="34" text-anchor="middle" font-size="15" font-weight="700" fill="${gaugeColor}" font-variant-numeric="tabular-nums">${esc(r.score)}</text>
+  </svg>`;
+
+  let h = `<div class="detail"><div class="riskrow">${gaugeSvg}
+    <div><b>${esc(i.id)}</b> — ${esc(String(r.level).toUpperCase())} risk ${r.final ? "" : '<span class="muted">(preliminary)</span>'}
+    <span class="chip">${esc(i.status)}</span>
+    <div class="muted">${esc(r.justification)}</div></div></div>`;
+
+  if (r.breakdown && r.breakdown.length) {
+    const rows = r.breakdown.map(b => `<tr>
+      <td style="padding:3px 8px;border-bottom:1px solid #1a212b;font-weight:600;text-transform:capitalize;">${esc(b.factor)}</td>
+      <td style="padding:3px 8px;border-bottom:1px solid #1a212b;font-family:ui-monospace,Consolas,monospace;color:var(--text);">${esc(b.value)}</td>
+      <td style="padding:3px 8px;border-bottom:1px solid #1a212b;text-align:right;font-weight:700;font-variant-numeric:tabular-nums;color:var(--accent);">${esc(b.points)} pts</td>
+    </tr>`).join("");
+    const llmNote = r.llm_influence ? `<div class="small muted" style="margin-top:6px;padding:2px 4px;">ℹ️ <b>LLM influence:</b> ${esc(r.llm_influence)}</div>` : "";
+    h += `<div style="margin:8px 0 12px;background:var(--panel2);border:1px solid var(--line);border-radius:6px;padding:8px 10px;">
+      <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:6px;">Risk Score Breakdown (Total: ${esc(r.score)}/100)</div>
+      <table style="width:100%;border-collapse:collapse;font-size:11px;">
+        <thead>
+          <tr style="color:var(--muted);text-align:left;border-bottom:1px solid var(--line);">
+            <th style="padding:2px 8px;font-weight:600;">Factor</th>
+            <th style="padding:2px 8px;font-weight:600;">Value</th>
+            <th style="padding:2px 8px;font-weight:600;text-align:right;">Points</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+      ${llmNote}
+    </div>`;
+  }
+
+  // Analyst feedback controls and status
+  const fb = i.feedback;
+  const isFP = fb && fb.label === "false_positive";
+  const isConf = fb && fb.label === "confirmed";
+  let fbStatusHtml = "";
+  if (fb) {
+    fbStatusHtml = `<div style="margin-top:8px;display:flex;align-items:center;gap:8px;">
+      <span class="muted small">Decision:</span>
+      <span class="tag ${isFP ? 'v-false_positive' : 'v-true_positive'}" style="font-weight:700;">
+        ${isFP ? 'FALSE POSITIVE (CLOSED)' : 'CONFIRMED'}
+      </span>
+      <span class="chip">${esc(i.status)}</span>
+      ${fb.note ? `<span class="muted small">“${esc(fb.note)}”</span>` : ''}
+    </div>`;
+  }
+
+  h += `<div class="fb-box" style="margin:10px 0;padding:8px 12px;background:var(--panel2);border:1px solid var(--line);border-radius:6px;">
+    <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:6px;">Analyst Feedback</div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <input type="text" id="fb-note-input" placeholder="Optional note (e.g. pen test, verified breach)" value="${esc(fb?.note || '')}"
+             style="flex:1;min-width:180px;background:#0b0f14;color:var(--text);border:1px solid var(--line);border-radius:4px;padding:5px 8px;font:inherit;font-size:12px;">
+      <button id="btn-fb-fp" class="sim" data-id="${esc(i.id)}" data-label="false_positive" ${isFP ? 'style="border-color:var(--ok);font-weight:700;"' : ''}>False positive</button>
+      <button id="btn-fb-conf" class="approve" data-id="${esc(i.id)}" data-label="confirmed" ${isConf ? 'style="font-weight:700;"' : ''}>Confirmed</button>
+    </div>
+    <div id="fb-err" class="small" style="color:var(--crit);margin-top:4px;" hidden></div>
+    ${fbStatusHtml}
+  </div>`;
+
+  // MITRE kill chain strip
+  const KILL_CHAIN = [
+    "Credential Access",
+    "Initial Access",
+    "Privilege Escalation",
+    "Defense Evasion",
+    "Exfiltration",
+    "Impact"
+  ];
+  const stageCounts = Object.fromEntries(KILL_CHAIN.map(s => [s, 0]));
+  (i.timeline || []).forEach(t => {
+    const tactic = (t.mitre_tactic || "").split(" (")[0].trim();
+    if (Object.hasOwn(stageCounts, tactic)) stageCounts[tactic]++;
+  });
+
+  let furthestIdx = -1;
+  KILL_CHAIN.forEach((s, idx) => {
+    if (stageCounts[s] > 0) furthestIdx = idx;
+  });
+
+  const kcBoxes = KILL_CHAIN.map((stage, idx) => {
+    const cnt = stageCounts[stage];
+    const reached = cnt > 0;
+    const isFurthest = (idx === furthestIdx);
+    const cls = ["kc-step", reached ? "reached" : "dim", isFurthest ? "furthest" : ""].filter(Boolean).join(" ");
+    return `<div class="${cls}">
+      <div class="kc-title">${esc(stage)}</div>
+      <div class="kc-status">
+        ${reached ? `<span class="kc-count">${esc(cnt)} ${cnt === 1 ? 'alert' : 'alerts'}</span>` : '<span class="kc-none">—</span>'}
+        ${isFurthest ? '<span class="kc-badge">FURTHEST</span>' : ''}
+      </div>
+    </div>`;
+  }).join("");
+
+  h += `<h3>MITRE ATT&CK Kill Chain</h3><div class="kc-strip">${kcBoxes}</div>`;
+  h += `<h3>Entity Graph</h3>${buildEntityGraphSvg(i)}`;
+
+  h += "<h3>Agent investigation</h3>";
+  if (inv) {
+    const vc = ["true_positive", "false_positive", "needs_review"].includes(inv.verdict) ? inv.verdict : "needs_review";
+    h += `<div><span class="tag v-${vc}">${esc(inv.verdict)}</span>
+      confidence <b>${Math.round(inv.confidence * 100)}%</b> <span class="muted">· ${esc(inv.source)}${inv.model ? " (" + esc(inv.model) + ")" : ""} · ${esc(inv.tool_calls)} tool calls · ${esc(inv.duration_s)}s · saw ${esc(inv.alerts_considered)} alerts</span></div>
+      <p>${esc(inv.summary)}</p>`;
+    if (inv.fallback_reason) h += `<div class="muted small">fallback reason: ${esc(inv.fallback_reason)}</div>`;
+    if (inv.attack_timeline.length) h += '<h3>Attack timeline</h3><div class="tl">' + inv.attack_timeline.map(t => {
+      const techChip = t.technique_id ? `<span class="chip" style="font-weight:700;color:var(--accent);">${esc(t.technique_id)}</span>` : "";
+      return `<div><b>${esc(t.time)}</b> ${esc(t.tactic)} ${techChip}<div class="muted">${esc(t.description)} ${(t.event_ids || []).map(x => `<code>${esc(x)}</code>`).join(" ")}</div></div>`;
+    }).join("") + "</div>";
+    if (inv.key_evidence.length) h += "<h3>Key evidence</h3>" + inv.key_evidence.map(e =>
+      `<div><code>${esc(e.event_id)}</code> <span class="muted">${esc(e.why)}</span></div>`).join("");
+  } else {
+    h += `<div class="muted">${S.investigating.includes(i.id) ? "Agent is investigating..." : "No investigation yet."}</div>`;
+  }
+  h += '<h3>Correlated alerts</h3><div class="tl">' + i.timeline.map(t => {
+    const techId = t.technique_id || t.mitre_technique_id || "";
+    const techChip = techId ? `<span class="chip" style="font-weight:700;color:var(--accent);">${esc(techId)}</span>` : "";
+    return `<div><b>${hms(t.ts)}</b> ${esc(t.type)} ${techChip} <span class="tag ${lvl(t.severity)}">${esc(t.severity)}</span>
+     <div class="muted">${esc(t.mitre_tactic)} — ${esc(t.detail)}</div></div>`;
+  }).join("") + "</div>";
+  const acts = Object.values(S.actions).filter(a => a.incident_id === i.id).sort((a, b) => a.created_ts - b.created_ts);
+  h += "<h3>Response actions</h3>" + (acts.length ? acts.map(a => {
+    const isAuto = a.mode === "auto" || a.decided_by === "auto";
+    const modeLbl = a.mode_label || (isAuto ? "AUTO_EXECUTE" : "REQUIRES_APPROVAL");
+    const isAutoMode = modeLbl === "AUTO_EXECUTE";
+    const isFailed = (a.status === "verification_failed" || a.verification_status === "failed");
+    const retryBtn = isFailed ? ` <button class="approve" data-act="retry" data-id="${esc(a.id)}" style="background:var(--crit);border-color:var(--crit);color:#fff;font-size:10px;padding:2px 8px;margin-left:6px;">↻ Retry</button>` : "";
+    return `<div class="act" style="padding-left:0">
+      <div class="grow">
+        <b>${esc(a.type)}</b> <code>${esc(a.target)}</code>
+        <span class="tag" style="${isAutoMode ? 'background:#1f6feb;color:#fff;' : 'background:var(--med);color:#0b0f14;'}font-size:10px;font-weight:700;padding:1px 6px;">${esc(modeLbl)}</span>
+        <span class="muted">${a.executor ? " · " + esc(a.executor) : ""}${a.result ? " · " + esc(a.result) : ""}${a.verification_status ? " · " + esc(a.verification_status) : ""}${a.recommended_next_step ? " (next: " + esc(a.recommended_next_step) + ")" : ""}</span>
+        ${retryBtn}
+      </div>${actionButtons(a)}</div>`;
+  }).join("") : '<div class="muted">None yet.</div>');
+  box.innerHTML = h + "</div>";
+  box.scrollTop = keep;
+}
+
+// ---------- overview charts ----------
+function renderEpsChart() {
+  const el = $("chartEps");
+  if (!el) return;
+  const series = S.stats.eps_series || [];
+  const pts = series.length ? series : new Array(60).fill(0);
+  const maxVal = Math.max(1, ...pts);
+  const curEps = S.stats.eps ?? (pts[pts.length - 1] || 0);
+
+  const w = 300, h = 120;
+  const pl = 30, pr = 8, pt = 14, pb = 18;
+  const cw = w - pl - pr;
+  const ch = h - pt - pb;
+
+  const n = pts.length;
+  const coords = pts.map((v, i) => {
+    const x = pl + (i / (n - 1 || 1)) * cw;
+    const y = (h - pb) - (Math.min(v, maxVal) / maxVal) * ch;
+    return [x.toFixed(1), y.toFixed(1)];
+  });
+
+  const lineStr = coords.map(c => c.join(",")).join(" ");
+  const areaStr = `${pl},${h - pb} ${lineStr} ${pl + cw},${h - pb}`;
+  const lastCoord = coords[coords.length - 1];
+
+  el.innerHTML = `<svg viewBox="0 0 ${w} ${h}" width="100%" height="100%" style="display:block">
+    <line x1="${pl}" y1="${pt}" x2="${w - pr}" y2="${pt}" stroke="var(--line)" stroke-dasharray="3 3"/>
+    <text x="${pl - 4}" y="${pt + 4}" fill="var(--muted)" font-size="9" text-anchor="end" font-family="ui-monospace,Consolas,monospace">${esc(maxVal)}</text>
+    <text x="${w - pr}" y="${pt - 3}" fill="var(--muted)" font-size="9" text-anchor="end">max: ${esc(maxVal)} · cur: ${esc(curEps)} eps</text>
+    <line x1="${pl}" y1="${h - pb}" x2="${w - pr}" y2="${h - pb}" stroke="var(--line)"/>
+    <text x="${pl - 4}" y="${h - pb + 3}" fill="var(--muted)" font-size="9" text-anchor="end" font-family="ui-monospace,Consolas,monospace">0</text>
+    <text x="${pl}" y="${h - 4}" fill="var(--muted)" font-size="8">-60s</text>
+    <text x="${w - pr}" y="${h - 4}" fill="var(--muted)" font-size="8" text-anchor="end">now</text>
+    <polygon points="${areaStr}" fill="rgba(88, 166, 255, 0.15)"/>
+    <polyline points="${lineStr}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="${lastCoord[0]}" cy="${lastCoord[1]}" r="3" fill="var(--accent)"/>
+  </svg>`;
+}
+
+function renderAlertsChart() {
+  const el = $("chartAlerts");
+  if (!el) return;
+  const raw = S.stats.alerts_by_type || {};
+  const entries = Object.entries(raw).filter(([_, c]) => c > 0).sort((a, b) => b[1] - a[1]);
+  if (!entries.length) {
+    el.innerHTML = '<div class="empty" style="padding:26px 10px">No alerts yet</div>';
+    return;
+  }
+  const top6 = entries.slice(0, 6);
+  const remainder = entries.length - 6;
+  const max = Math.max(1, ...top6.map(e => e[1]));
+  let html = '<div class="chart-list" style="gap:2px;">' + top6.map(([type, count]) => {
+    const pct = Math.min(100, Math.round((count / max) * 100));
+    return `<div class="hbar-row" style="gap:1px;font-size:10px;">
+      <div class="hbar-label-wrap">
+        <span class="hbar-name" title="${esc(type)}" style="font-size:10px;">${esc(type)}</span>
+        <span class="hbar-count" style="font-size:10px;">${esc(count)}</span>
+      </div>
+      <svg width="100%" height="4">
+        <rect width="100%" height="4" rx="2" fill="#222a35"/>
+        <rect width="${pct}%" height="4" rx="2" fill="var(--high)"/>
+      </svg>
+    </div>`;
+  }).join("");
+  if (remainder > 0) {
+    html += `<div class="muted small" style="text-align:right;font-size:10px;padding-top:2px;">+${remainder} more</div>`;
+  }
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+function renderIncidentsChart() {
+  const el = $("chartIncidents");
+  if (!el) return;
+  const sevData = S.stats.incidents_by_severity || { low: 0, medium: 0, high: 0, critical: 0 };
+  const total = (sevData.low || 0) + (sevData.medium || 0) + (sevData.high || 0) + (sevData.critical || 0);
+
+  const r = 32, C = 2 * Math.PI * r;
+  let circles = "";
+  if (total === 0) {
+    circles = `<circle cx="45" cy="45" r="${r}" stroke="#222a35" stroke-width="10" fill="none"/>`;
+  } else {
+    let offset = 0;
+    const sevs = ["critical", "high", "medium", "low"];
+    circles = `<g transform="rotate(-90 45 45)">` + sevs.map(s => {
+      const cnt = sevData[s] || 0;
+      if (cnt <= 0) return "";
+      const len = (cnt / total) * C;
+      const c = `<circle cx="45" cy="45" r="${r}" stroke="var(--${lvl(s)})" stroke-width="10" fill="none" stroke-dasharray="${len.toFixed(2)} ${(C - len).toFixed(2)}" stroke-dashoffset="${(-offset).toFixed(2)}"/>`;
+      offset += len;
+      return c;
+    }).join("") + `</g>`;
+  }
+
+  const centerNum = `<text x="45" y="49" text-anchor="middle" font-size="16" font-weight="700" fill="${total > 0 ? 'var(--text)' : 'var(--muted)'}">${esc(total)}</text>`;
+  const centerLbl = `<text x="45" y="59" text-anchor="middle" font-size="7" fill="var(--muted)" letter-spacing="0.05em">TOTAL</text>`;
+
+  const legend = ["critical", "high", "medium", "low"].map(s => {
+    return `<div class="donut-leg-row">
+      <span class="donut-dot ${lvl(s)}"></span>
+      <span class="donut-leg-lbl">${esc(s)}</span>
+      <span class="donut-leg-val">${esc(sevData[s] || 0)}</span>
+    </div>`;
+  }).join("");
+
+  el.innerHTML = `<div class="donut-wrap">
+    <svg width="90" height="90" viewBox="0 0 90 90" style="flex-shrink:0">
+      ${circles}
+      ${centerNum}
+      ${centerLbl}
+    </svg>
+    <div class="donut-legend">${legend}</div>
+  </div>`;
+}
+
+function renderTopEntities() {
+  const el = $("topEntities");
+  if (!el) return;
+  const ips = S.stats.top_ips || [];
+  const countries = S.stats.top_countries || [];
+
+  function makeRanked(list, emptyText) {
+    if (!list.length) return `<div class="empty-mini">${emptyText}</div>`;
+    const max = Math.max(1, ...list.map(x => x.count));
+    return list.map((item, idx) => {
+      const pct = Math.min(100, Math.round((item.count / max) * 100));
+      return `<div class="ranked-row">
+        <span class="ranked-idx">${idx + 1}</span>
+        <span class="ranked-key" title="${esc(item.key)}">${esc(item.key)}</span>
+        <div class="ranked-bar">
+          <svg width="100%" height="5">
+            <rect width="100%" height="5" rx="2.5" fill="#222a35"/>
+            <rect width="${pct}%" height="5" rx="2.5" fill="var(--accent)"/>
+          </svg>
+        </div>
+        <span class="ranked-cnt">${esc(item.count)}</span>
+      </div>`;
+    }).join("");
+  }
+
+  el.innerHTML = `<div class="top-split">
+    <div class="top-col">
+      <div class="top-subhdr">Top IPs</div>
+      <div class="top-list">${makeRanked(ips, "No IP data yet")}</div>
+    </div>
+    <div class="top-col">
+      <div class="top-subhdr">Top Countries</div>
+      <div class="top-list">${makeRanked(countries, "No country data yet")}</div>
+    </div>
+  </div>`;
+}
+
+function renderOverviewCharts() {
+  renderEpsChart();
+  renderAlertsChart();
+  renderIncidentsChart();
+  renderTopEntities();
+}
+
+// ---------- response center (Actions tab) ----------
+function renderPipelineStrip(a) {
+  const st = actStatus(a);
+  const isRejected = (st === "rejected" || st === "withdrawn");
+
+  // Step 1: ACTION
+  const s1Cls = "pipe-step is-done";
+  const s1Time = a.created_ts ? hms(a.created_ts) : "-";
+
+  // Step 2: QUEUED
+  let s2Cls = "pipe-step is-waiting";
+  let s2Sub = "-";
+  if (st === "pending_approval") {
+    s2Cls = "pipe-step is-pending";
+    s2Sub = "awaiting approval";
+  } else if (isRejected) {
+    s2Cls = "pipe-step is-failed";
+    s2Sub = st === "withdrawn" ? "withdrawn" : "rejected";
+  } else if (st === "queued") {
+    s2Cls = "pipe-step is-active";
+    s2Sub = a.decided_ts ? hms(a.decided_ts) : (a.created_ts ? hms(a.created_ts) : "queued");
+  } else {
+    s2Cls = "pipe-step is-done";
+    s2Sub = a.decided_ts ? hms(a.decided_ts) : (a.created_ts ? hms(a.created_ts) : "queued");
+  }
+
+  // Step 3: EXECUTION (executor badge: UiPath or builtin)
+  let s3Cls = "pipe-step is-waiting";
+  let s3Sub = "-";
+  const rawExec = a.executor ? String(a.executor).toLowerCase() : "";
+  const execLabel = rawExec === "uipath" ? "UiPath" : (rawExec ? "builtin" : "");
+  const execBadge = execLabel ? `<span class="chip" style="font-size:9px;padding:0 4px;margin:0 0 0 4px;background:#2b3441;">${esc(execLabel)}</span>` : "";
+
+  if (st === "executing") {
+    s3Cls = "pipe-step is-active";
+    s3Sub = a.claim_time ? hms(a.claim_time) : "in progress";
+  } else if (["executed", "verified", "verification_failed"].includes(st)) {
+    s3Cls = "pipe-step is-done";
+    s3Sub = a.finish_time ? hms(a.finish_time) : (a.claim_time ? hms(a.claim_time) : "done");
+  } else if (st === "failed") {
+    s3Cls = "pipe-step is-failed";
+    s3Sub = "execution failed";
+  }
+
+  // Step 4: VERIFICATION (verified, failed or pending)
+  let s4Cls = "pipe-step is-waiting";
+  let s4Sub = "-";
+  const vSt = a.verification_status || (st === "verified" ? "verified" : (st === "verification_failed" ? "failed" : null));
+  if (vSt === "verified" || st === "verified") {
+    s4Cls = "pipe-step is-done";
+    s4Sub = `verified ${a.finish_time ? hms(a.finish_time) : ""}`.trim();
+  } else if (vSt === "failed" || st === "verification_failed") {
+    s4Cls = "pipe-step is-failed";
+    s4Sub = `failed ${a.finish_time ? hms(a.finish_time) : ""}`.trim();
+  } else if (st === "executed" || vSt === "pending" || st === "executing") {
+    s4Cls = "pipe-step is-pending";
+    s4Sub = "pending";
+  }
+
+  return `<div class="pipe-strip">
+    <div class="${s1Cls}">
+      <div class="pipe-hdr"><span>ACTION</span></div>
+      <div class="pipe-sub">${esc(s1Time)}</div>
+    </div>
+    <span class="pipe-arrow">&rarr;</span>
+    <div class="${s2Cls}">
+      <div class="pipe-hdr"><span>QUEUED</span></div>
+      <div class="pipe-sub">${esc(s2Sub)}</div>
+    </div>
+    <span class="pipe-arrow">&rarr;</span>
+    <div class="${s3Cls}">
+      <div class="pipe-hdr"><span>EXECUTION</span>${execBadge}</div>
+      <div class="pipe-sub">${esc(s3Sub)}</div>
+    </div>
+    <span class="pipe-arrow">&rarr;</span>
+    <div class="${s4Cls}">
+      <div class="pipe-hdr"><span>VERIFICATION</span></div>
+      <div class="pipe-sub">${esc(s4Sub)}</div>
+    </div>
+  </div>`;
+}
+
+function renderActionCard(a) {
+  const st = actStatus(a);
+  const isPending = st === "pending_approval";
+  const isFailed = (st === "verification_failed" || a.verification_status === "failed");
+  const isAuto = a.mode === "auto" || a.decided_by === "auto";
+  const modeLbl = a.mode_label || (isAuto ? "AUTO_EXECUTE" : "REQUIRES_APPROVAL");
+
+  let cardStyle = "background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin-bottom:8px;display:flex;flex-direction:column;gap:6px;";
+  if (isPending) {
+    cardStyle = "background:var(--panel);border:1px solid var(--med);border-left:4px solid var(--med);border-radius:8px;padding:10px 12px;margin-bottom:8px;display:flex;flex-direction:column;gap:6px;";
+  } else if (isFailed) {
+    cardStyle = "background:var(--panel);border:1px solid var(--crit);border-left:4px solid var(--crit);border-radius:8px;padding:10px 12px;margin-bottom:8px;display:flex;flex-direction:column;gap:6px;";
+  }
+
+  let failedBox = "";
+  if (isFailed) {
+    failedBox = `<div style="margin-top:6px;padding:8px 10px;background:#2e1518;border:1px solid var(--crit);border-radius:6px;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+      <div>
+        <div style="color:var(--crit);font-weight:700;font-size:11px;">⚠️ Verification failed</div>
+        <div style="color:#ffb3ae;font-size:11px;">${esc(a.verification_detail || "Simulated state check failed")}</div>
+        ${a.recommended_next_step ? `<div style="color:var(--muted);font-size:11px;margin-top:2px;">Recommended next step: <b style="color:var(--text);">${esc(a.recommended_next_step)}</b></div>` : ""}
+      </div>
+      <button class="approve" data-act="retry" data-id="${esc(a.id)}" style="background:var(--crit);border-color:var(--crit);color:#fff;font-size:11px;font-weight:700;padding:4px 10px;flex-shrink:0;">
+        ↻ Retry
+      </button>
+    </div>`;
+  }
+
+  return `<div class="action-card" style="${cardStyle}">
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+        <b style="font-size:13px;">${esc(a.type)}</b>
+        <code style="font-size:12px;">${esc(a.target)}</code>
+        <span class="chip" style="font-size:10px;">${esc(a.incident_id || '')}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        ${actionButtons(a)}
+      </div>
+    </div>
+    <div class="muted" style="font-size:11px;">${esc(a.reason || '')}</div>
+    ${renderPipelineStrip(a)}
+    ${failedBox}
+  </div>`;
+}
+
+function renderResponseCenter() {
+  const all = Object.values(S.actions);
+  const isApproval = a => (a.mode === "approval" || a.mode_label === "REQUIRES_APPROVAL" || a.status === "pending_approval" || a.type === "isolate_host" || a.type === "disable_user");
+  const approvalList = all.filter(isApproval);
+  const autoList = all.filter(a => !isApproval(a));
+
+  // Sort: pending approvals first, then newest first
+  approvalList.sort((a, b) => {
+    const aPend = a.status === "pending_approval" ? 1 : 0;
+    const bPend = b.status === "pending_approval" ? 1 : 0;
+    return (bPend - aPend) || ((b.created_ts || 0) - (a.created_ts || 0));
+  });
+
+  // Auto list: newest first
+  autoList.sort((a, b) => (b.created_ts || 0) - (a.created_ts || 0));
+
+  const pendCount = approvalList.filter(a => a.status === "pending_approval").length;
+  const badgeApp = $("badge-approval");
+  if (badgeApp) {
+    badgeApp.textContent = pendCount ? `${pendCount} pending / ${approvalList.length}` : String(approvalList.length);
+  }
+  const badgeAuto = $("badge-auto");
+  if (badgeAuto) {
+    badgeAuto.textContent = String(autoList.length);
+  }
+
+  const grpApp = $("group-approval");
+  if (grpApp) {
+    grpApp.innerHTML = approvalList.length ? approvalList.map(renderActionCard).join("") : '<div class="empty">No approval actions</div>';
+  }
+
+  const grpAuto = $("group-auto");
+  if (grpAuto) {
+    grpAuto.innerHTML = autoList.length ? autoList.map(renderActionCard).join("") : '<div class="empty">No auto-execute actions</div>';
+  }
+}
+
+// ---------- panels ----------
+const RENDER = {
+  kpi: renderKpi, agent: renderAgent, detail: renderDetail, ovCharts: renderOverviewCharts,
+  ovInc() { $("ovInc").innerHTML = incHtml(sortedIncidents()); },
+  incList() { $("incList").innerHTML = incHtml(sortedIncidents()); },
+  actions() { renderResponseCenter(); dirty.delete("pending"); dirty.delete("history"); },
+  pending() { renderResponseCenter(); dirty.delete("actions"); dirty.delete("history"); },
+  history() { renderResponseCenter(); dirty.delete("actions"); dirty.delete("pending"); },
+};
+
+// ---------- audit tab (REST, refreshed while visible) ----------
+let auditTimer = 0;
+function updateAuditFilters(rows) {
+  const incSel = $("audit-filter-inc");
+  const actSel = $("audit-filter-act");
+  if (!incSel || !actSel) return;
+
+  const currentInc = incSel.value;
+  const currentAct = actSel.value;
+
+  const incs = new Set();
+  const acts = new Set();
+  rows.forEach(r => {
+    if (r.incident_id) incs.add(r.incident_id);
+    const a = r.action || r.event;
+    if (a) acts.add(a);
+  });
+
+  const sortedIncs = [...incs].sort();
+  const sortedActs = [...acts].sort();
+
+  const incKey = sortedIncs.join(",");
+  const actKey = sortedActs.join(",");
+
+  if (incSel.dataset.key !== incKey) {
+    incSel.dataset.key = incKey;
+    incSel.innerHTML = '<option value="">All incidents</option>' + sortedIncs.map(i => `<option value="${esc(i)}"${i === currentInc ? " selected" : ""}>${esc(i)}</option>`).join("");
+  }
+  if (actSel.dataset.key !== actKey) {
+    actSel.dataset.key = actKey;
+    actSel.innerHTML = '<option value="">All actions</option>' + sortedActs.map(a => `<option value="${esc(a)}"${a === currentAct ? " selected" : ""}>${esc(a)}</option>`).join("");
+  }
+}
+
+function renderAuditRows() {
+  const container = $("audit");
+  if (!container) return;
+  const rows = S.auditRows || [];
+  const selectedInc = $("audit-filter-inc") ? $("audit-filter-inc").value : "";
+  const selectedAct = $("audit-filter-act") ? $("audit-filter-act").value : "";
+
+  const filtered = rows.filter(r => {
+    if (selectedInc && r.incident_id !== selectedInc) return false;
+    const a = r.action || r.event || "";
+    if (selectedAct && a !== selectedAct) return false;
+    return true;
+  });
+
+  container.innerHTML = filtered.length ? filtered.map(r => {
+    const hPreview = r.hash ? `hash: ${r.hash.slice(0, 12)}…` : "unhashed";
+    return `<div class="arow" title="${esc(hPreview)}">
+      <span class="muted">${hms(r.ts)}</span>
+      <span>${esc(r.actor)}</span>
+      <b>${esc(r.action || r.event)}</b>
+      <span class="muted">${esc(r.incident_id || "")}</span>
+      <span class="d muted">${esc(r.detail)}</span>
+    </div>`;
+  }).join("") : '<div class="empty">No matching audit entries</div>';
+}
+
+async function loadAudit() {
+  try {
+    const [rows, verify] = await Promise.all([
+      fetch("/audit?limit=200").then(r => r.json()),
+      fetch("/audit/verify").then(r => r.json()).catch(() => null)
+    ]);
+
+    const badge = $("audit-integrity");
+    if (badge && verify) {
+      if (verify.valid) {
+        badge.className = "pill ok";
+        badge.textContent = "Integrity: verified";
+        badge.title = `${verify.entries} entries verified via SHA-256 tamper-evident hash chain`;
+      } else {
+        badge.className = "pill bad";
+        badge.textContent = "Integrity: broken";
+        badge.title = `Chain broken at entry ID ${verify.first_broken_id}`;
+      }
+    }
+
+    const sig = rows.length + ":" + (rows[0] ? rows[0].id : 0);
+    S.auditRows = rows;
+    updateAuditFilters(rows);
+    renderAuditRows();
+    S.auditSig = sig;
+  } catch (e) {
+    if ($("audit")) $("audit").innerHTML = '<div class="empty">Could not load the audit log</div>';
+  }
+}
+function auditSoon() { if (S.tab === "audit" && !auditTimer) auditTimer = setTimeout(() => { auditTimer = 0; loadAudit(); }, 1500); }
+
+// ---------- tabs ----------
+function showTab(t) {
+  S.tab = t;
+  document.querySelectorAll("#tabs button").forEach(b => b.classList.toggle("on", b.dataset.tab === t));
+  document.querySelectorAll(".tab").forEach(d => d.hidden = d.id !== "tab-" + t);
+  Object.keys(PANEL_TAB).filter(n => PANEL_TAB[n] === t).forEach(n => dirty.add(n));   // repaint what changed while hidden
+  flush();
+  if (t === "audit") loadAudit();
+}
+
+// ---------- WebSocket messages ----------
+const handlers = {
+  snapshot(d) {
+    S.incidents = Object.fromEntries(d.incidents.map(i => [i.id, i]));     // no toasts for what already existed
+    S.actions = Object.fromEntries(d.actions.map(a => [a.id, a]));
+    S.investigating = d.investigating; S.stats = d.stats;
+    $("feed").innerHTML = ""; $("feedEmpty").hidden = d.events.length > 0;
+    d.events.forEach(addEvent);
+    if (!S.incidents[S.selected]) S.selected = sortedIncidents()[0]?.id ?? null;
+    mark("kpi", "agent", "ovCharts", "ovInc", "incList", "detail", "actions", "pending", "history");
+  },
+  event: addEvent,
+  alert: a => { addAlert(a); mark("ovCharts"); auditSoon(); },
+  incident(i) {
+    const prev = S.incidents[i.id];
+    S.incidents[i.id] = i;
+    if (!S.selected) S.selected = i.id;
+    if (!isClosed(i)) {
+      if (!prev) toast(`New incident ${i.id}: ${i.severity} severity, risk ${riskScore(i) ?? "?"}`, lvl(i.severity), "new:" + i.id);
+      else {
+        const parts = [];
+        if (SEV[i.severity] > SEV[prev.severity]) parts.push(`severity ${prev.severity} → ${i.severity}`);
+        if (riskScore(prev) !== null && riskScore(i) > riskScore(prev)) parts.push(`risk ${riskScore(prev)} → ${riskScore(i)}`);
+        if (parts.length) toast(`${i.id} escalated: ${parts.join(", ")}`, lvl(i.severity), "esc:" + i.id);   // repeats for one incident update this toast
+      }
+    }
+    mark("kpi", "agent", "ovCharts", "ovInc", "incList"); if (i.id === S.selected) mark("detail");
+    auditSoon();
+  },
+  action(a) { S.actions[a.id] = a; mark("kpi", "actions", "pending", "history", "detail"); auditSoon(); },
+  agent(d) { S.investigating = d.investigating; mark("agent", "ovInc", "incList", "detail"); },
+  stats(s) { S.stats = s; mark("kpi", "ovCharts"); },
+};
+
+// ---------- websocket with auto-reconnect (a reconnect gets a fresh snapshot, so nothing is lost) ----------
+function connect() {
+  const ws = new WebSocket((location.protocol === "https:" ? "wss://" : "ws://") + location.host + "/ws");
+  ws.onopen = () => { $("ws").className = "pill ok"; $("ws").textContent = "live"; };
+  ws.onmessage = m => { const msg = JSON.parse(m.data); (handlers[msg.type] || (() => {}))(msg.data); };
+  ws.onclose = () => { $("ws").className = "pill bad"; $("ws").textContent = "disconnected - retrying..."; setTimeout(connect, 1500); };
+}
+connect();
+
+// ---------- user actions ----------
+async function post(url) {
+  const r = await fetch(url, { method: "POST" });
+  const body = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(body.detail || r.statusText);
+  return body;
+}
+async function launch(btn, url, label) {
+  btn.disabled = true;
+  try {
+    const p = await post(url);
+    toast(`${label} started${p.attacker_ip ? ": " + p.attacker_ip + (p.attacker_country ? " (" + p.attacker_country + ")" : "") : ""}${p.victim ? " → user " + p.victim : ""}`, null, "launch");
+  } catch (e) { toast(`Could not start ${label.toLowerCase()}: ${e.message}`, "high", "launch"); }
+  setTimeout(() => btn.disabled = false, 800);
+}
+$("attack").onclick = e => launch(e.currentTarget, "/simulate/attack", "Attack");
+document.querySelectorAll("button.sim").forEach(b => b.onclick = () => launch(b, b.dataset.sim, b.dataset.sim.includes("spray") ? "Password spray" : "Cloud attack"));
+
+document.body.addEventListener("click", async ev => {
+  const tab = ev.target.closest("#tabs button");
+  if (tab) { showTab(tab.dataset.tab); return; }
+
+  // Analyst feedback submission
+  const fbBtn = ev.target.closest("button[data-label]");
+  if (fbBtn) {
+    const id = fbBtn.dataset.id;
+    const label = fbBtn.dataset.label;
+    const note = ($("fb-note-input") ? $("fb-note-input").value : "").trim();
+    const fpBtn = $("btn-fb-fp");
+    const confBtn = $("btn-fb-conf");
+    const errEl = $("fb-err");
+    if (errEl) errEl.hidden = true;
+    if (fpBtn) fpBtn.disabled = true;
+    if (confBtn) confBtn.disabled = true;
+
+    try {
+      const res = await fetch(`/incidents/${encodeURIComponent(id)}/feedback`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ label, note })
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.detail || res.statusText);
+      }
+      const updated = await res.json();
+      S.incidents[id] = updated;
+      toast(`Incident ${id} marked ${label === 'false_positive' ? 'False Positive' : 'Confirmed'}`, label === 'false_positive' ? 'low' : 'high', 'feedback');
+      mark("kpi", "ovCharts", "ovInc", "incList", "detail");
+    } catch (err) {
+      if (errEl) {
+        errEl.textContent = "Feedback error: " + err.message;
+        errEl.hidden = false;
+      }
+      if (fpBtn) fpBtn.disabled = false;
+      if (confBtn) confBtn.disabled = false;
+    }
+    return;
+  }
+
+  // Response action approve / reject / confirm
+  const btn = ev.target.closest("button[data-act]");
+  if (btn) {
+    const act = btn.dataset.act;
+    const id = btn.dataset.id;
+    if (act === "cancel-confirm") {
+      S.confirmingAction = null;
+      mark("actions", "pending", "detail");
+      return;
+    }
+    if (btn.dataset.needsConfirm && !btn.dataset.confirmed) {
+      S.confirmingAction = id;
+      mark("actions", "pending", "detail");
+      return;
+    }
+    S.confirmingAction = null;
+    btn.disabled = true;
+    try {
+      await post(`/actions/${encodeURIComponent(id)}/${act}`);
+      mark("kpi", "actions", "pending", "history", "detail");
+    } catch (e) {
+      toast("Action failed: " + e.message, "high");
+      btn.disabled = false;
+    }
+    return;
+  }
+
+  const inc = ev.target.closest(".inc");
+  if (inc) {
+    S.selected = inc.dataset.id;
+    mark("ovInc", "incList", "detail");
+    if (S.tab === "overview") showTab("incidents");                         // from the compact list, jump to the detail
+  }
+});
+
+// Live feed filters
+const feedAlertsToggle = $("feedAlertsOnly");
+if (feedAlertsToggle) {
+  feedAlertsToggle.onchange = function() {
+    $("feed").classList.toggle("feed-filter-alerts", this.checked);
+  };
+}
+const feedSourceSelect = $("feedSourceSelect");
+if (feedSourceSelect) {
+  feedSourceSelect.onchange = function() {
+    ["traffic_gen", "attack_injector", "system_collector", "cloudtrail"].forEach(s => $("feed").classList.remove("feed-filter-src-" + s));
+    if (this.value !== "all") {
+      $("feed").classList.add("feed-filter-src-" + this.value);
+    }
+  };
+}
+
+// Audit filters
+const fInc = $("audit-filter-inc");
+if (fInc) fInc.onchange = renderAuditRows;
+const fAct = $("audit-filter-act");
+if (fAct) fAct.onchange = renderAuditRows;
+
+// Presentation mode
+function applyPresentationMode(on) {
+  document.body.classList.toggle("presentation-mode", on);
+  const btn = $("btn-pres");
+  if (btn) {
+    btn.classList.toggle("on", on);
+    btn.style.background = on ? "var(--accent)" : "";
+    btn.style.color = on ? "#0b0f14" : "var(--text)";
+  }
+  sessionStorage.setItem("presentation_mode", on ? "1" : "0");
+}
+if ($("btn-pres")) {
+  $("btn-pres").onclick = () => {
+    const cur = document.body.classList.contains("presentation-mode");
+    applyPresentationMode(!cur);
+  };
+}
+if (sessionStorage.getItem("presentation_mode") === "1") {
+  applyPresentationMode(true);
+}
+mark("kpi", "agent", "ovCharts", "ovInc");
+if (location.hash) {
+  const parts = location.hash.replace("#", "").split(":");
+  if (parts[1]) S.selected = parts[1];
+  if (["overview", "incidents", "actions", "audit"].includes(parts[0])) showTab(parts[0]);
+}
+</script>
+</body>
+</html>

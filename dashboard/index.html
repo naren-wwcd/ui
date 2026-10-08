@@ -1,0 +1,3179 @@
+<!doctype html>
+<html lang="en" class="theme-dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sentinel | Autonomous Security Operations Platform</title>
+
+<!-- Typography: Plus Jakarta Sans & JetBrains Mono -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<!-- Phosphor Icons: Regular, Bold, and Fill Styles -->
+<link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.2/src/regular/style.css">
+<link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.2/src/bold/style.css">
+<link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.2/src/fill/style.css">
+<script src="https://unpkg.com/@phosphor-icons/web@2.1.2"></script>
+
+<style>
+  /* ==========================================================================
+     DESIGN SYSTEM: 2-COLOUR THEME (Electric Royal Indigo + Electric Cyan)
+     Typography: Plus Jakarta Sans (UI) + JetBrains Mono (Code/Telemetry)
+     ========================================================================== */
+  :root, html.theme-dark {
+    /* Brand Two-Colour Palette */
+    --primary: #6366f1;          /* Electric Royal Indigo */
+    --primary-hover: #4f46e5;
+    --primary-subtle: rgba(99, 102, 241, 0.12);
+    --primary-border: rgba(99, 102, 241, 0.28);
+    --secondary: #06b6d4;        /* Electric Cyan */
+    --secondary-hover: #0891b2;
+    --secondary-subtle: rgba(6, 182, 212, 0.12);
+    --secondary-border: rgba(6, 182, 212, 0.28);
+
+    /* Neutral Surfaces */
+    --bg-page: #080c16;
+    --bg-surface: #0f172a;
+    --bg-surface-elevated: #162238;
+    --bg-surface-muted: #1c2b45;
+    --border-subtle: #1e2d48;
+    --border-strong: #2c3e60;
+
+    /* Text */
+    --text-primary: #f8fafc;
+    --text-secondary: #94a3b8;
+    --text-muted: #64748b;
+
+    /* Semantic Tonal Accents */
+    --crit: #f43f5e;
+    --crit-subtle: rgba(244, 63, 94, 0.15);
+    --crit-border: rgba(244, 63, 94, 0.35);
+    --high: #fb923c;
+    --high-subtle: rgba(251, 146, 60, 0.15);
+    --high-border: rgba(251, 146, 60, 0.35);
+    --med: #fbbf24;
+    --med-subtle: rgba(251, 191, 36, 0.15);
+    --med-border: rgba(251, 191, 36, 0.35);
+    --low: #38bdf8;
+    --low-subtle: rgba(56, 189, 248, 0.15);
+    --low-border: rgba(56, 189, 248, 0.35);
+    --ok: #10b981;
+    --ok-subtle: rgba(16, 185, 129, 0.15);
+    --ok-border: rgba(16, 185, 129, 0.35);
+
+    --card-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+    --chart-grid: rgba(255, 255, 255, 0.05);
+    --chart-line: #6366f1;
+    --chart-gradient-from: rgba(99, 102, 241, 0.35);
+    --chart-gradient-to: rgba(6, 182, 212, 0.02);
+  }
+
+  html.theme-light {
+    /* Brand Two-Colour Palette */
+    --primary: #4f46e5;          /* Deep Cobalt Indigo */
+    --primary-hover: #4338ca;
+    --primary-subtle: rgba(79, 70, 229, 0.08);
+    --primary-border: rgba(79, 70, 229, 0.22);
+    --secondary: #0284c7;        /* Crisp Ocean Cyan */
+    --secondary-hover: #0369a1;
+    --secondary-subtle: rgba(2, 132, 199, 0.08);
+    --secondary-border: rgba(2, 132, 199, 0.22);
+
+    /* Neutral Surfaces */
+    --bg-page: #f8fafc;
+    --bg-surface: #ffffff;
+    --bg-surface-elevated: #f1f5f9;
+    --bg-surface-muted: #e2e8f0;
+    --border-subtle: #e2e8f0;
+    --border-strong: #cbd5e1;
+
+    /* Text */
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #64748b;
+
+    /* Semantic Tonal Accents */
+    --crit: #e11d48;
+    --crit-subtle: rgba(225, 29, 72, 0.1);
+    --crit-border: rgba(225, 29, 72, 0.25);
+    --high: #ea580c;
+    --high-subtle: rgba(234, 88, 12, 0.1);
+    --high-border: rgba(234, 88, 12, 0.25);
+    --med: #d97706;
+    --med-subtle: rgba(217, 119, 6, 0.1);
+    --med-border: rgba(217, 119, 6, 0.25);
+    --low: #0284c7;
+    --low-subtle: rgba(2, 132, 199, 0.1);
+    --low-border: rgba(2, 132, 199, 0.25);
+    --ok: #059669;
+    --ok-subtle: rgba(5, 150, 105, 0.1);
+    --ok-border: rgba(5, 150, 105, 0.25);
+
+    --card-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.06);
+    --chart-grid: rgba(0, 0, 0, 0.05);
+    --chart-line: #4f46e5;
+    --chart-gradient-from: rgba(79, 70, 229, 0.22);
+    --chart-gradient-to: rgba(2, 132, 199, 0.02);
+  }
+
+  /* Reset & Base */
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; padding: 0; }
+  body {
+    background: var(--bg-page);
+    color: var(--text-primary);
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    font-size: 13px;
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+    min-width: 1180px;
+    overflow-x: hidden;
+    transition: background 0.2s ease, color 0.2s ease;
+  }
+
+  code, pre, .mono {
+    font-family: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+    font-feature-settings: "tnum" 1, "cv01" 1;
+  }
+  code {
+    background: var(--bg-surface-muted);
+    color: var(--text-primary);
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-size: 11px;
+    border: 1px solid var(--border-subtle);
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 999px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+  /* Utility classes */
+  .muted { color: var(--text-secondary); }
+  .dim { color: var(--text-muted); }
+  .small { font-size: 11px; }
+  .xs { font-size: 10px; }
+  .bold { font-weight: 600; }
+  .bolder { font-weight: 700; }
+  .flex { display: flex; }
+  .flex-col { display: flex; flex-direction: column; }
+  .items-center { align-items: center; }
+  .justify-between { justify-content: space-between; }
+  .gap-4 { gap: 4px; }
+  .gap-6 { gap: 6px; }
+  .gap-8 { gap: 8px; }
+  .gap-10 { gap: 10px; }
+  .gap-12 { gap: 12px; }
+  .gap-16 { gap: 16px; }
+  .spacer { flex: 1; }
+  .ellipsis { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* --------------------------------------------------------------------------
+     TOP APP HEADER (End-User Centric Security Operations Center)
+     -------------------------------------------------------------------------- */
+  header.app-header {
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    z-index: 20;
+    flex-shrink: 0;
+  }
+
+  .brand-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: inherit;
+  }
+  .brand-logo {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    font-size: 18px;
+    box-shadow: 0 2px 8px var(--primary-subtle);
+  }
+  .brand-text {
+    display: flex;
+    flex-direction: column;
+  }
+  .brand-title {
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+    line-height: 1.2;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .brand-badge {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 1px 5px;
+    border-radius: 4px;
+    background: var(--primary-subtle);
+    color: var(--primary);
+    border: 1px solid var(--primary-border);
+    text-transform: uppercase;
+  }
+  .brand-sub {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  /* Status Badges */
+  .status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface-elevated);
+    color: var(--text-secondary);
+    white-space: nowrap;
+    transition: all 0.2s ease;
+  }
+  .status-pill i { font-size: 14px; }
+  .status-pill.ok {
+    background: var(--ok-subtle);
+    color: var(--ok);
+    border-color: var(--ok-border);
+  }
+  .status-pill.warn {
+    background: var(--med-subtle);
+    color: var(--med);
+    border-color: var(--med-border);
+  }
+  .status-pill.crit {
+    background: var(--crit-subtle);
+    color: var(--crit);
+    border-color: var(--crit-border);
+  }
+  .status-pill.active {
+    background: var(--primary-subtle);
+    color: var(--primary);
+    border-color: var(--primary-border);
+  }
+  .status-pill.pulse-glow {
+    position: relative;
+  }
+  .beacon-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    display: inline-block;
+  }
+  .beacon-dot.pulse {
+    animation: beacon 1.6s infinite ease-out;
+  }
+  @keyframes beacon {
+    0% { transform: scale(0.9); opacity: 1; }
+    50% { transform: scale(1.4); opacity: 0.4; }
+    100% { transform: scale(0.9); opacity: 1; }
+  }
+
+  /* Header action buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 13px;
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface-elevated);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+  .btn:hover:not(:disabled) {
+    background: var(--bg-surface-muted);
+    border-color: var(--border-strong);
+    color: var(--text-primary);
+  }
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  .btn i { font-size: 14px; }
+  .btn-primary {
+    background: var(--primary);
+    border-color: var(--primary);
+    color: #ffffff;
+    box-shadow: 0 1px 3px var(--primary-subtle);
+  }
+  .btn-primary:hover:not(:disabled) {
+    background: var(--primary-hover);
+    border-color: var(--primary-hover);
+    color: #ffffff;
+  }
+  .btn-secondary {
+    background: var(--secondary);
+    border-color: var(--secondary);
+    color: #ffffff;
+  }
+  .btn-secondary:hover:not(:disabled) {
+    background: var(--secondary-hover);
+    border-color: var(--secondary-hover);
+    color: #ffffff;
+  }
+  .btn-danger {
+    background: var(--crit);
+    border-color: var(--crit);
+    color: #ffffff;
+  }
+  .btn-danger:hover:not(:disabled) {
+    opacity: 0.9;
+  }
+  .btn-success {
+    background: var(--ok);
+    border-color: var(--ok);
+    color: #ffffff;
+  }
+  .btn-success:hover:not(:disabled) {
+    opacity: 0.9;
+  }
+  .btn-icon {
+    padding: 6px 8px;
+    font-size: 15px;
+  }
+
+  /* --------------------------------------------------------------------------
+     NAVIGATION BAR (DEDICATED ACTION PAGES)
+     -------------------------------------------------------------------------- */
+  nav.main-nav {
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  .nav-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    border: none;
+    background: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border-radius: 4px 4px 0 0;
+    text-decoration: none;
+  }
+  .nav-item i { font-size: 16px; color: var(--text-muted); transition: color 0.15s; }
+  .nav-item:hover {
+    color: var(--text-primary);
+  }
+  .nav-item:hover i { color: var(--primary); }
+  .nav-item.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+    background: var(--primary-subtle);
+  }
+  .nav-item.active i { color: var(--primary); }
+  .nav-badge {
+    background: var(--bg-surface-muted);
+    color: var(--text-secondary);
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 999px;
+  }
+  .nav-badge.hot {
+    background: var(--crit);
+    color: #ffffff;
+  }
+  .nav-badge.pending {
+    background: var(--med);
+    color: #0f172a;
+  }
+  .nav-badge:empty { display: none; }
+
+  /* --------------------------------------------------------------------------
+     MAIN VIEWPORT & PAGE ROUTING
+     -------------------------------------------------------------------------- */
+  main.app-viewport {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .page-view {
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    padding: 18px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .page-view[hidden] {
+    display: none !important;
+  }
+
+  /* --------------------------------------------------------------------------
+     CARDS & PANELS
+     -------------------------------------------------------------------------- */
+  .panel {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    box-shadow: var(--card-shadow);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .panel-header {
+    padding: 10px 14px;
+    background: var(--bg-surface-elevated);
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-shrink: 0;
+  }
+  .panel-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin: 0;
+  }
+  .panel-title i { font-size: 15px; color: var(--primary); }
+  .panel-body {
+    padding: 14px;
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+  }
+
+  /* KPI Grid */
+  .kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 12px;
+  }
+  .kpi-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 12px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+  }
+  .kpi-card:hover {
+    border-color: var(--border-strong);
+  }
+  .kpi-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 3px;
+    height: 100%;
+    background: var(--primary);
+    opacity: 0.6;
+  }
+  .kpi-card.kpi-accent::before { background: var(--secondary); }
+  .kpi-card.kpi-warn::before { background: var(--med); }
+  .kpi-card.kpi-crit::before { background: var(--crit); }
+  .kpi-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .kpi-top i { font-size: 16px; }
+  .kpi-val {
+    font-size: 26px;
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+  }
+  .kpi-sub {
+    font-size: 10.5px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* Badges & Tags */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 10.5px;
+    font-weight: 700;
+    line-height: 1.2;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+  }
+  .tag.critical, .tag.s-critical { background: var(--crit-subtle); color: var(--crit); border: 1px solid var(--crit-border); }
+  .tag.high, .tag.s-high { background: var(--high-subtle); color: var(--high); border: 1px solid var(--high-border); }
+  .tag.medium, .tag.s-medium { background: var(--med-subtle); color: var(--med); border: 1px solid var(--med-border); }
+  .tag.low, .tag.s-low { background: var(--low-subtle); color: var(--low); border: 1px solid var(--low-border); }
+  .tag.ok, .tag.verified { background: var(--ok-subtle); color: var(--ok); border: 1px solid var(--ok-border); }
+  .tag.indigo { background: var(--primary-subtle); color: var(--primary); border: 1px solid var(--primary-border); }
+  .tag.cyan { background: var(--secondary-subtle); color: var(--secondary); border: 1px solid var(--secondary-border); }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 6px;
+    border-radius: 4px;
+    background: var(--bg-surface-muted);
+    color: var(--text-secondary);
+    font-size: 11px;
+    border: 1px solid var(--border-subtle);
+  }
+
+  /* Severity class shortcuts */
+  .risk-chip {
+    min-width: 38px;
+    text-align: center;
+    padding: 4px 6px;
+    border-radius: 6px;
+    font-weight: 800;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+  }
+  .risk-chip.critical { background: var(--crit); color: #ffffff; }
+  .risk-chip.high { background: var(--high); color: #ffffff; }
+  .risk-chip.medium { background: var(--med); color: #0f172a; }
+  .risk-chip.low { background: var(--low); color: #ffffff; }
+
+  /* --------------------------------------------------------------------------
+     LIVE FEED & INCIDENTS (Overview & Incidents Page)
+     -------------------------------------------------------------------------- */
+  .incident-row {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    border-left: 3px solid transparent;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .incident-row:hover { background: var(--bg-surface-elevated); }
+  .incident-row.selected {
+    background: var(--bg-surface-elevated);
+    border-left-color: var(--primary);
+  }
+  .incident-row.closed { opacity: 0.55; }
+  .incident-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+
+  /* Feed Rows */
+  .feed-row {
+    padding: 4px 12px;
+    border-bottom: 1px solid var(--border-subtle);
+    font-family: 'JetBrains Mono', Consolas, monospace;
+    font-size: 11.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 3px solid transparent;
+  }
+  .feed-row:hover { background: var(--bg-surface-elevated); }
+  .feed-row.alert {
+    background: var(--med-subtle);
+    color: var(--text-primary);
+    font-weight: 600;
+  }
+  .feed-row.alert.s-critical { border-left-color: var(--crit); background: var(--crit-subtle); }
+  .feed-row.alert.s-high { border-left-color: var(--high); background: var(--high-subtle); }
+  .feed-row.alert.s-medium { border-left-color: var(--med); background: var(--med-subtle); }
+  .feed-row.alert.s-low { border-left-color: var(--low); background: var(--low-subtle); }
+  .feed-row.attack { color: var(--crit); }
+  .feed-row.fail { color: var(--med); }
+  .feed-row.collector { color: var(--secondary); }
+
+  /* Feed filters */
+  #liveFeed.filter-alerts-only .feed-row:not(.alert) { display: none !important; }
+  #liveFeed.filter-src-traffic_gen .feed-row[data-kind="event"]:not(.src-traffic_gen) { display: none !important; }
+  #liveFeed.filter-src-attack_injector .feed-row[data-kind="event"]:not(.src-attack_injector) { display: none !important; }
+  #liveFeed.filter-src-system_collector .feed-row[data-kind="event"]:not(.src-system_collector) { display: none !important; }
+  #liveFeed.filter-src-cloudtrail .feed-row[data-kind="event"]:not(.src-cloudtrail) { display: none !important; }
+
+  /* --------------------------------------------------------------------------
+     MITRE ATT&CK KILL CHAIN PROGRESSION
+     -------------------------------------------------------------------------- */
+  .killchain-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 8px;
+    margin: 8px 0 14px;
+  }
+  .killchain-step {
+    padding: 8px 6px;
+    border-radius: 8px;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface-elevated);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 4px;
+    transition: all 0.2s ease;
+  }
+  .killchain-step.dim { opacity: 0.45; }
+  .killchain-step.reached {
+    border-color: var(--primary-border);
+    background: var(--primary-subtle);
+  }
+  .killchain-step.furthest {
+    border-color: var(--crit-border);
+    background: var(--crit-subtle);
+    box-shadow: 0 0 10px var(--crit-subtle);
+  }
+  .killchain-title {
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: var(--text-primary);
+  }
+  .killchain-badge {
+    background: var(--primary);
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 999px;
+    padding: 0 6px;
+  }
+  .killchain-step.furthest .killchain-badge {
+    background: var(--crit);
+  }
+
+  /* --------------------------------------------------------------------------
+     RESPONSE CENTER PIPELINE
+     -------------------------------------------------------------------------- */
+  .pipe-tracker {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 10px;
+    background: var(--bg-surface-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    font-size: 11px;
+  }
+  .pipe-node {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+    padding: 6px 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface);
+  }
+  .pipe-node.is-done {
+    border-color: var(--ok-border);
+    background: var(--ok-subtle);
+    color: var(--ok);
+  }
+  .pipe-node.is-active {
+    border-color: var(--primary-border);
+    background: var(--primary-subtle);
+    color: var(--primary);
+  }
+  .pipe-node.is-pending {
+    border-color: var(--med-border);
+    background: var(--med-subtle);
+    color: var(--med);
+  }
+  .pipe-node.is-failed {
+    border-color: var(--crit-border);
+    background: var(--crit-subtle);
+    color: var(--crit);
+  }
+  .pipe-node.is-waiting {
+    opacity: 0.5;
+  }
+  .pipe-arrow {
+    color: var(--text-muted);
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+  .pipe-lbl {
+    font-size: 9.5px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .pipe-detail {
+    font-size: 10px;
+    color: var(--text-secondary);
+    font-family: 'JetBrains Mono', Consolas, monospace;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Response Action Card */
+  .action-item-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: all 0.15s ease;
+  }
+  .action-item-card.pending-approval {
+    border-color: var(--med-border);
+    background: var(--med-subtle);
+    border-left: 4px solid var(--med);
+  }
+  .action-item-card.has-failed {
+    border-color: var(--crit-border);
+    background: var(--crit-subtle);
+    border-left: 4px solid var(--crit);
+  }
+
+  /* --------------------------------------------------------------------------
+     DEDICATED CONTAINMENT CONSOLE PAGE
+     -------------------------------------------------------------------------- */
+  .containment-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .action-tile {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: var(--card-shadow);
+    transition: transform 0.15s ease, border-color 0.15s ease;
+  }
+  .action-tile:hover {
+    border-color: var(--border-strong);
+  }
+  .action-tile-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .action-tile-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: var(--primary-subtle);
+    border: 1px solid var(--primary-border);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .action-tile-icon.sec {
+    background: var(--secondary-subtle);
+    border-color: var(--secondary-border);
+    color: var(--secondary);
+  }
+  .action-tile-icon.crit {
+    background: var(--crit-subtle);
+    border-color: var(--crit-border);
+    color: var(--crit);
+  }
+  .action-tile-info {
+    flex: 1;
+  }
+  .action-tile-title {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 2px 0;
+  }
+  .action-tile-desc {
+    font-size: 11.5px;
+    color: var(--text-secondary);
+    line-height: 1.35;
+    margin: 0;
+  }
+  .action-tile-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: auto;
+  }
+  .form-input {
+    background: var(--bg-surface-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    padding: 7px 10px;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-size: 12px;
+    outline: none;
+    transition: border-color 0.15s ease;
+    width: 100%;
+  }
+  .form-input:focus {
+    border-color: var(--primary);
+  }
+  .preset-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    font-size: 10.5px;
+  }
+  .preset-btn {
+    background: var(--bg-surface-muted);
+    border: 1px solid var(--border-subtle);
+    border-radius: 4px;
+    padding: 2px 6px;
+    color: var(--text-secondary);
+    font-family: 'JetBrains Mono', Consolas, monospace;
+    font-size: 10.5px;
+    cursor: pointer;
+  }
+  .preset-btn:hover {
+    color: var(--primary);
+    border-color: var(--primary-border);
+  }
+
+  /* --------------------------------------------------------------------------
+     AUDIT VAULT
+     -------------------------------------------------------------------------- */
+  .audit-row {
+    display: grid;
+    grid-template-columns: 80px 100px 180px 110px 1fr;
+    gap: 12px;
+    padding: 6px 12px;
+    border-bottom: 1px solid var(--border-subtle);
+    font-size: 12px;
+    align-items: center;
+  }
+  .audit-row:hover { background: var(--bg-surface-elevated); }
+  .audit-row > * { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* --------------------------------------------------------------------------
+     TOAST NOTIFICATIONS
+     -------------------------------------------------------------------------- */
+  #toastContainer {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 1000;
+    max-width: 400px;
+  }
+  .toast-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border-strong);
+    border-left: 4px solid var(--primary);
+    border-radius: 8px;
+    padding: 10px 14px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--text-primary);
+    animation: toastIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .toast-card.critical { border-left-color: var(--crit); }
+  .toast-card.high { border-left-color: var(--high); }
+  .toast-card.medium { border-left-color: var(--med); }
+  .toast-card.ok { border-left-color: var(--ok); }
+  @keyframes toastIn { from { transform: translateY(12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+  /* Presentation Mode */
+  body.presentation-mode { font-size: 15px; }
+  body.presentation-mode .kpi-val { font-size: 38px; }
+  body.presentation-mode .panel-title { font-size: 14px; }
+
+  /* Empty state placeholder */
+  .empty-state {
+    padding: 30px 14px;
+    text-align: center;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .empty-state i { font-size: 32px; color: var(--text-muted); opacity: 0.6; }
+</style>
+</head>
+
+<body>
+<!-- ==========================================================================
+     TOP ENTERPRISE APPLICATION HEADER
+     ========================================================================== -->
+<header class="app-header">
+  <div class="brand-group">
+    <div class="brand-logo">
+      <i class="ph-bold ph-shield-check"></i>
+    </div>
+    <div class="brand-text">
+      <div class="brand-title">
+        SENTINEL <span class="brand-badge">Autonomous SecOps</span>
+      </div>
+      <div class="brand-sub">Enterprise Threat Detection, Forensics &amp; Response</div>
+    </div>
+  </div>
+
+  <div style="width: 1px; height: 26px; background: var(--border-subtle); margin: 0 4px;"></div>
+
+  <!-- End-User Centric System Posture & Defense Indicators -->
+  <div id="postureStatus" class="status-pill ok pulse-glow" title="Live Threat Posture: Continuous Neural Baseline Active">
+    <span class="beacon-dot pulse"></span>
+    <span id="postureText">Posture: Protected</span>
+  </div>
+
+  <div id="agentStatus" class="status-pill active" title="Autonomous Security Analyst Monitoring State">
+    <i class="ph-bold ph-radar"></i>
+    <span id="agentText">Autonomous Analyst: Active</span>
+  </div>
+
+  <div id="rpaStatus" class="status-pill" title="Playbook Orchestration Dispatch Status">
+    <i class="ph-bold ph-robot"></i>
+    <span id="rpaText">Playbook Engine: Built-in Active</span>
+  </div>
+
+  <div id="aiEngineStatus" class="status-pill" title="AI Forensic Intelligence Model Provenance">
+    <i class="ph-bold ph-sparkle"></i>
+    <span id="aiEngineText">AI Forensic Core: Ready</span>
+  </div>
+
+  <div class="muted small flex items-center gap-6" title="Telemetry Ingestion Queue Status">
+    <i class="ph-bold ph-broadcast" style="color:var(--secondary)"></i>
+    <span>Stream Fidelity: <b style="color:var(--text-primary)" id="streamHealth">100%</b> (<span id="queue">0</span> buf · <span id="dropped">0</span> shed)</span>
+  </div>
+
+  <div class="spacer"></div>
+
+  <!-- Attack Simulator Quick Triggers -->
+  <div class="flex items-center gap-8">
+    <button id="btnAttack" class="btn btn-danger" title="Simulate a real multi-stage cyber attack across kill chain">
+      <i class="ph-bold ph-skull"></i> Launch Attack
+    </button>
+    <button class="btn btn-secondary sim-trigger" data-sim="/simulate/spray" title="Simulate password spraying against multiple accounts">
+      <i class="ph-bold ph-crosshair"></i> Spray Test
+    </button>
+    <button class="btn btn-secondary sim-trigger" data-sim="/simulate/cloud-attack" title="Replay AWS CloudTrail credential compromise and S3 exfil">
+      <i class="ph-bold ph-cloud-arrow-down"></i> Cloud Replay
+    </button>
+
+    <div style="width: 1px; height: 24px; background: var(--border-subtle); margin: 0 2px;"></div>
+
+    <!-- Theme Switcher -->
+    <button id="themeToggleBtn" class="btn btn-icon" title="Toggle Light / Dark Mode">
+      <i class="ph-bold ph-sun" id="themeIcon"></i>
+    </button>
+
+    <!-- Presentation Mode Toggle -->
+    <button id="presToggleBtn" class="btn btn-icon" title="Presentation View Mode">
+      <i class="ph-bold ph-presentation-chart"></i>
+    </button>
+
+    <!-- Connection Status -->
+    <div id="wsPill" class="status-pill crit" title="WebSocket Live Telemetry Status">
+      <span class="beacon-dot"></span>
+      <span id="wsText">Connecting</span>
+    </div>
+  </div>
+</header>
+
+<!-- ==========================================================================
+     PRIMARY NAVIGATION TABS (DEDICATED PAGES)
+     ========================================================================== -->
+<nav class="main-nav" id="mainNav">
+  <button class="nav-item active" data-page="overview">
+    <i class="ph-bold ph-chart-line-up"></i>
+    <span>Live Operations</span>
+  </button>
+  <button class="nav-item" data-page="incidents">
+    <i class="ph-bold ph-shield-warning"></i>
+    <span>Incident Forensics</span>
+    <span class="nav-badge" id="badgeIncidents"></span>
+  </button>
+  <button class="nav-item" data-page="actions">
+    <i class="ph-bold ph-lightning"></i>
+    <span>Response Approvals</span>
+    <span class="nav-badge pending" id="badgeApprovals"></span>
+  </button>
+  <button class="nav-item" data-page="containment">
+    <i class="ph-bold ph-firewall"></i>
+    <span>Action Console</span>
+  </button>
+  <button class="nav-item" data-page="audit">
+    <i class="ph-bold ph-seal-check"></i>
+    <span>Compliance Vault</span>
+  </button>
+  <button class="nav-item" data-page="simulation">
+    <i class="ph-bold ph-flask"></i>
+    <span>Threat Lab &amp; Ingest</span>
+  </button>
+</nav>
+
+<!-- ==========================================================================
+     APPLICATION PAGES VIEWPORT
+     ========================================================================== -->
+<main class="app-viewport">
+
+  <!-- ========================================================================
+       PAGE 1: LIVE OPERATIONS (OVERVIEW & TELEMETRY STREAM)
+       ======================================================================== -->
+  <div class="page-view" id="page-overview">
+    <!-- Executive KPI Strip -->
+    <div class="kpi-strip">
+      <div class="kpi-card">
+        <div class="kpi-top"><span>Ingestion Rate</span><i class="ph-bold ph-pulse" style="color:var(--primary)"></i></div>
+        <div class="kpi-val" id="k-eps">0</div>
+        <div class="kpi-sub">events / second</div>
+      </div>
+      <div class="kpi-card kpi-accent">
+        <div class="kpi-top"><span>Total Events</span><i class="ph-bold ph-database" style="color:var(--secondary)"></i></div>
+        <div class="kpi-val" id="k-events">0</div>
+        <div class="kpi-sub">ingested &amp; analyzed</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-top"><span>Active Incidents</span><i class="ph-bold ph-warning-octagon" style="color:var(--primary)"></i></div>
+        <div class="kpi-val" id="k-active">0</div>
+        <div class="kpi-sub">under triage</div>
+      </div>
+      <div class="kpi-card kpi-crit" id="kpiCritCard">
+        <div class="kpi-top"><span>Critical Threats</span><i class="ph-bold ph-siren" style="color:var(--crit)"></i></div>
+        <div class="kpi-val" id="k-crit" style="color:var(--crit)">0</div>
+        <div class="kpi-sub">immediate response needed</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-top"><span>Correlated Alerts</span><i class="ph-bold ph-bell-ringing" style="color:var(--med)"></i></div>
+        <div class="kpi-val" id="k-alerts">0</div>
+        <div class="kpi-sub">rule triggers</div>
+      </div>
+      <div class="kpi-card kpi-warn" id="kpiPendingCard">
+        <div class="kpi-top"><span>Pending Approvals</span><i class="ph-bold ph-hand-palm" style="color:var(--med)"></i></div>
+        <div class="kpi-val" id="k-pending" style="color:var(--med)">0</div>
+        <div class="kpi-sub">awaiting human sign-off</div>
+      </div>
+    </div>
+
+    <!-- Analytics Charts Strip -->
+    <div style="display: grid; grid-template-columns: 1.4fr 1.1fr 1fr 1.2fr; gap: 14px; height: 195px; flex-shrink: 0;">
+      <div class="panel">
+        <div class="panel-header">
+          <h3 class="panel-title"><i class="ph-bold ph-chart-line-up"></i> Event Throughput (60s)</h3>
+          <span class="small dim mono" id="chartEpsLabel">Live EPS</span>
+        </div>
+        <div class="panel-body" style="padding: 6px 10px;" id="chartEpsBox"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <h3 class="panel-title"><i class="ph-bold ph-chart-bar"></i> Alerts by Category</h3>
+          <span class="small dim" id="alertCountLabel">Types</span>
+        </div>
+        <div class="panel-body" style="padding: 8px 12px;" id="chartAlertsBox"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <h3 class="panel-title"><i class="ph-bold ph-chart-pie-slice"></i> Incident Severity</h3>
+        </div>
+        <div class="panel-body" style="padding: 6px;" id="chartIncidentsBox"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <h3 class="panel-title"><i class="ph-bold ph-globe-hemisphere-east"></i> Top Threat Sources</h3>
+        </div>
+        <div class="panel-body" style="padding: 8px 12px;" id="topEntitiesBox"></div>
+      </div>
+    </div>
+
+    <!-- Lower Operational Grid: Incident Roster & Live Event Stream -->
+    <div style="display: grid; grid-template-columns: 460px 1fr; gap: 14px; flex: 1; min-height: 0;">
+      <!-- Incident Overview Strip -->
+      <div class="panel" style="display: flex; flex-direction: column;">
+        <div class="panel-header">
+          <h3 class="panel-title"><i class="ph-bold ph-shield-warning"></i> Open Security Incidents</h3>
+          <button class="btn xs" onclick="goToPage('incidents')">View All &rarr;</button>
+        </div>
+        <div class="panel-body" style="padding: 0; overflow-y: auto;" id="overviewIncidentsList">
+          <div class="empty-state">
+            <i class="ph-bold ph-shield-check"></i>
+            <div>No open incidents detected</div>
+            <div class="small dim">Use the attack launcher above to simulate a threat scenario.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Stream Telemetry Feed -->
+      <div class="panel" style="display: flex; flex-direction: column;">
+        <div class="panel-header">
+          <h3 class="panel-title"><i class="ph-bold ph-terminal-window"></i> Live Event &amp; Detection Telemetry</h3>
+          <div class="flex items-center gap-10">
+            <label class="flex items-center gap-4 small muted" style="cursor: pointer; user-select: none;">
+              <input type="checkbox" id="chkAlertsOnly" style="cursor: pointer;"> Alerts only
+            </label>
+            <select id="selFeedSource" class="form-input" style="padding: 2px 8px; font-size: 11px; width: auto; cursor: pointer;">
+              <option value="all">All Sources</option>
+              <option value="traffic_gen">Simulated Traffic</option>
+              <option value="attack_injector">Attack Injector</option>
+              <option value="system_collector">Host Collector</option>
+              <option value="cloudtrail">AWS CloudTrail</option>
+            </select>
+          </div>
+        </div>
+        <div id="liveFeedEmpty" class="empty-state" style="padding: 40px 14px;">
+          <i class="ph-bold ph-broadcast"></i>
+          <div>Awaiting streaming security events...</div>
+        </div>
+        <div id="liveFeed" style="flex: 1; overflow-y: auto;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       PAGE 2: INCIDENT FORENSICS (FULL WORKBENCH & DOSSIER)
+       ======================================================================== -->
+  <div class="page-view" id="page-incidents" hidden>
+    <div style="display: grid; grid-template-columns: 380px 1fr; gap: 16px; height: 100%; min-height: 0;">
+      <!-- Left: Filterable Incident List -->
+      <div class="panel" style="display: flex; flex-direction: column; min-height: 0;">
+        <div class="panel-header">
+          <h3 class="panel-title"><i class="ph-bold ph-list-dashes"></i> Incident Queue</h3>
+          <span class="small dim mono" id="incidentsQueueCount">0 total</span>
+        </div>
+        <div style="padding: 8px 12px; border-bottom: 1px solid var(--border-subtle); display: flex; gap: 6px;">
+          <input type="text" id="incFilterSearch" class="form-input" placeholder="Search by ID, user, IP, tactic..." style="font-size: 11.5px;">
+        </div>
+        <div class="panel-body" style="padding: 0; overflow-y: auto;" id="incidentsList"></div>
+      </div>
+
+      <!-- Right: Comprehensive Forensic Dossier -->
+      <div class="panel" style="display: flex; flex-direction: column; min-height: 0;">
+        <div class="panel-header">
+          <h3 class="panel-title"><i class="ph-bold ph-fingerprint"></i> Incident Forensic Dossier</h3>
+          <div id="dossierMetaBadges" class="flex items-center gap-6"></div>
+        </div>
+        <div class="panel-body" style="padding: 16px 20px; overflow-y: auto;" id="incidentDetailBox">
+          <div class="empty-state" style="padding: 60px 20px;">
+            <i class="ph-bold ph-cursor-click"></i>
+            <div class="bold" style="font-size: 14px;">Select an Incident to Inspect</div>
+            <div class="small dim" style="max-width: 320px;">Choose an incident from the queue on the left to inspect the AI investigation, MITRE kill chain, entity map, and verified evidence.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       PAGE 3: RESPONSE APPROVALS & PLAYBOOKS
+       ======================================================================== -->
+  <div class="page-view" id="page-actions" hidden>
+    <div class="panel" style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
+      <div class="panel-header">
+        <div>
+          <h3 class="panel-title"><i class="ph-bold ph-lightning"></i> Automated Response &amp; Human-in-the-Loop Approvals</h3>
+          <div class="small dim" style="margin-top: 2px;">
+            Autonomous Pipeline: <b>Proposed Action</b> &rarr; <b>Approval Safeguard</b> &rarr; <b>Execution (Enterprise RPA)</b> &rarr; <b>Cryptographic Verification</b>
+          </div>
+        </div>
+        <div class="flex items-center gap-8">
+          <input type="text" id="actionsSearchInput" class="form-input" placeholder="Filter actions..." style="width: 180px; font-size: 11px;">
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; padding: 16px; flex: 1; min-height: 0; overflow: hidden;">
+        <!-- Left: High-Impact Human Approvals Queue -->
+        <div style="display: flex; flex-direction: column; background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; min-height: 0; overflow: hidden;">
+          <div style="padding: 10px 14px; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; background: var(--med-subtle);">
+            <div class="flex items-center gap-6">
+              <i class="ph-bold ph-hand-palm" style="color: var(--med); font-size: 16px;"></i>
+              <span style="font-weight: 700; font-size: 11.5px; color: var(--med); letter-spacing: 0.05em; text-transform: uppercase;">Requires Human Approval</span>
+            </div>
+            <span id="badgeActionsApproval" class="tag" style="background: var(--med); color: #0f172a; font-weight: 800;">0</span>
+          </div>
+          <div id="actionsApprovalGroup" style="padding: 12px; flex: 1; overflow-y: auto;"></div>
+        </div>
+
+        <!-- Right: Automated Containment Pipeline -->
+        <div style="display: flex; flex-direction: column; background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; min-height: 0; overflow: hidden;">
+          <div style="padding: 10px 14px; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; justify-content: space-between; background: var(--primary-subtle);">
+            <div class="flex items-center gap-6">
+              <i class="ph-bold ph-robot" style="color: var(--primary); font-size: 16px;"></i>
+              <span style="font-weight: 700; font-size: 11.5px; color: var(--primary); letter-spacing: 0.05em; text-transform: uppercase;">Autonomous Execution Log</span>
+            </div>
+            <span id="badgeActionsAuto" class="tag" style="background: var(--primary); color: #ffffff; font-weight: 800;">0</span>
+          </div>
+          <div id="actionsAutoGroup" style="padding: 12px; flex: 1; overflow-y: auto;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       PAGE 4: DEDICATED SECURITY ACTION & CONTAINMENT CONSOLE
+       ======================================================================== -->
+  <div class="page-view" id="page-containment" hidden>
+    <!-- Header banner -->
+    <div class="panel" style="padding: 14px 18px; flex-shrink: 0;">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-12">
+          <div style="width: 40px; height: 40px; border-radius: 8px; background: var(--primary-subtle); border: 1px solid var(--primary-border); display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 22px;">
+            <i class="ph-bold ph-firewall"></i>
+          </div>
+          <div>
+            <h2 style="margin: 0; font-size: 16px; font-weight: 700; color: var(--text-primary);">Emergency Security Containment Console</h2>
+            <div class="small dim" style="margin-top: 2px;">
+              Directly invoke enterprise security enforcement playbooks across firewalls, identity providers, and endpoints.
+            </div>
+          </div>
+        </div>
+        <div class="flex items-center gap-8">
+          <span class="status-pill ok"><i class="ph-bold ph-shield-check"></i> Playbook Dispatcher Ready</span>
+        </div>
+      </div>
+      <div id="consoleNotification" style="display: none; margin-top: 12px; padding: 10px 14px; border-radius: 6px; font-weight: 600; font-size: 12px;"></div>
+    </div>
+
+    <!-- 6 Dedicated Containment Action Cards -->
+    <div class="containment-grid">
+      <!-- 1. Network Firewall: Block IP -->
+      <div class="action-tile">
+        <div class="action-tile-header">
+          <div class="action-tile-icon crit">
+            <i class="ph-bold ph-shield-slash"></i>
+          </div>
+          <div class="action-tile-info">
+            <h3 class="action-tile-title">Perimeter Firewall: Block IP</h3>
+            <p class="action-tile-desc">Instantly push boundary firewall drop rules for identified hostile IP addresses.</p>
+          </div>
+        </div>
+        <div class="preset-pills" id="presetsBlockIp"></div>
+        <form id="formConsoleBlockIp" class="action-tile-form">
+          <input type="text" id="inputBlockIp" class="form-input mono" placeholder="Target IP (e.g. 185.220.101.45)" required>
+          <button type="submit" class="btn btn-danger"><i class="ph-bold ph-shield-slash"></i> Enforce IP Block</button>
+        </form>
+      </div>
+
+      <!-- 2. Identity Provider: Revoke Active Sessions -->
+      <div class="action-tile">
+        <div class="action-tile-header">
+          <div class="action-tile-icon">
+            <i class="ph-bold ph-sign-out"></i>
+          </div>
+          <div class="action-tile-info">
+            <h3 class="action-tile-title">Identity Provider: Revoke Sessions</h3>
+            <p class="action-tile-desc">Invalidate all OAuth tokens, refresh tokens, and active browser sessions for a compromised user.</p>
+          </div>
+        </div>
+        <div class="preset-pills" id="presetsRevokeSession"></div>
+        <form id="formConsoleRevoke" class="action-tile-form">
+          <input type="text" id="inputRevokeUser" class="form-input mono" placeholder="Username (e.g. alice)" required>
+          <button type="submit" class="btn btn-primary"><i class="ph-bold ph-sign-out"></i> Terminate Sessions</button>
+        </form>
+      </div>
+
+      <!-- 3. Identity & Access: Suspend User Account -->
+      <div class="action-tile">
+        <div class="action-tile-header">
+          <div class="action-tile-icon crit">
+            <i class="ph-bold ph-user-minus"></i>
+          </div>
+          <div class="action-tile-info">
+            <h3 class="action-tile-title">IAM: Suspend User Account</h3>
+            <p class="action-tile-desc">Immediately lock user account in directory to stop active lateral movement or unauthorized logins.</p>
+          </div>
+        </div>
+        <div class="preset-pills" id="presetsDisableUser"></div>
+        <form id="formConsoleDisable" class="action-tile-form">
+          <input type="text" id="inputDisableUser" class="form-input mono" placeholder="Target user to lock" required>
+          <button type="submit" class="btn btn-danger"><i class="ph-bold ph-user-minus"></i> Suspend Account</button>
+        </form>
+      </div>
+
+      <!-- 4. EDR: Isolate Compromised Host -->
+      <div class="action-tile">
+        <div class="action-tile-header">
+          <div class="action-tile-icon crit">
+            <i class="ph-bold ph-desktop-tower"></i>
+          </div>
+          <div class="action-tile-info">
+            <h3 class="action-tile-title">Endpoint EDR: Host Network Isolation</h3>
+            <p class="action-tile-desc">Sever all network connectivity to the endpoint while maintaining telemetry agent heartbeat.</p>
+          </div>
+        </div>
+        <div class="preset-pills" id="presetsIsolateHost"></div>
+        <form id="formConsoleIsolate" class="action-tile-form">
+          <input type="text" id="inputIsolateHost" class="form-input mono" placeholder="Hostname (e.g. web-01)" required>
+          <button type="submit" class="btn btn-danger"><i class="ph-bold ph-desktop-tower"></i> Isolate Endpoint</button>
+        </form>
+      </div>
+
+      <!-- 5. ITSM: Create Escalation Ticket -->
+      <div class="action-tile">
+        <div class="action-tile-header">
+          <div class="action-tile-icon sec">
+            <i class="ph-bold ph-ticket"></i>
+          </div>
+          <div class="action-tile-info">
+            <h3 class="action-tile-title">ITSM: Dispatch Remediation Ticket</h3>
+            <p class="action-tile-desc">Generate a high-priority tracking ticket in Jira / ServiceNow for audit and on-call handoff.</p>
+          </div>
+        </div>
+        <form id="formConsoleTicket" class="action-tile-form">
+          <input type="text" id="inputTicketTitle" class="form-input" placeholder="Ticket title / incident reference" required>
+          <button type="submit" class="btn btn-secondary"><i class="ph-bold ph-ticket"></i> Create ITSM Ticket</button>
+        </form>
+      </div>
+
+      <!-- 6. SOC Command: Broadcast Alert -->
+      <div class="action-tile">
+        <div class="action-tile-header">
+          <div class="action-tile-icon">
+            <i class="ph-bold ph-bell-ringing"></i>
+          </div>
+          <div class="action-tile-info">
+            <h3 class="action-tile-title">SOC Command: Broadcast Alert</h3>
+            <p class="action-tile-desc">Dispatch high-priority incident notifications to Slack, PagerDuty, or SOC on-call channels.</p>
+          </div>
+        </div>
+        <form id="formConsoleNotify" class="action-tile-form">
+          <input type="text" id="inputNotifyMessage" class="form-input" placeholder="Emergency broadcast text" required>
+          <button type="submit" class="btn btn-primary"><i class="ph-bold ph-bell-ringing"></i> Broadcast Notification</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Recent Execution History Table -->
+    <div class="panel" style="margin-top: 6px;">
+      <div class="panel-header">
+        <h3 class="panel-title"><i class="ph-bold ph-clock-counter-clockwise"></i> Direct Console Action Audit Log</h3>
+        <span class="small dim">Real-time audited operations</span>
+      </div>
+      <div class="panel-body" style="padding: 0;">
+        <div id="consoleHistoryBox"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       PAGE 5: COMPLIANCE & CRYPTOGRAPHIC AUDIT VAULT
+       ======================================================================== -->
+  <div class="page-view" id="page-audit" hidden>
+    <div class="panel" style="flex: 1; display: flex; flex-direction: column; min-height: 0;">
+      <div class="panel-header">
+        <div class="flex items-center gap-10">
+          <h3 class="panel-title"><i class="ph-bold ph-seal-check"></i> Tamper-Evident Cryptographic Audit Vault</h3>
+          <span id="auditIntegrityPill" class="status-pill ok" title="SHA-256 Tamper-Evident Hash Chain Verification">
+            <i class="ph-bold ph-shield-check"></i> Integrity: Checking...
+          </span>
+        </div>
+
+        <div class="flex items-center gap-8">
+          <label class="small muted">Incident:</label>
+          <select id="auditFilterInc" class="form-input" style="width: auto; padding: 2px 8px; font-size: 11px;">
+            <option value="">All Incidents</option>
+          </select>
+
+          <label class="small muted">Action:</label>
+          <select id="auditFilterAct" class="form-input" style="width: auto; padding: 2px 8px; font-size: 11px;">
+            <option value="">All Actions</option>
+          </select>
+
+          <button id="btnVerifyAudit" class="btn xs btn-secondary" title="Re-verify entire SHA-256 cryptographic chain on database">
+            <i class="ph-bold ph-arrows-clockwise"></i> Re-verify Chain
+          </button>
+        </div>
+      </div>
+
+      <div style="background: var(--bg-surface-elevated); padding: 8px 14px; border-bottom: 1px solid var(--border-subtle); font-size: 11px; font-weight: 700; color: var(--text-muted); display: grid; grid-template-columns: 80px 100px 180px 110px 1fr; gap: 12px;">
+        <span>TIMESTAMP</span>
+        <span>ACTOR</span>
+        <span>ACTION / EVENT</span>
+        <span>INCIDENT REF</span>
+        <span>CRYPTOGRAPHIC DETAIL &amp; HASH</span>
+      </div>
+
+      <div class="panel-body" style="padding: 0; overflow-y: auto;" id="auditTableBody"></div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       PAGE 6: THREAT SIMULATION & CLOUD INGESTION HUB
+       ======================================================================== -->
+  <div class="page-view" id="page-simulation" hidden>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; flex: 1;">
+      <!-- Attack Injector Lab -->
+      <div class="panel">
+        <div class="panel-header">
+          <h3 class="panel-title"><i class="ph-bold ph-crosshair"></i> Attack Scenario Launchpad</h3>
+          <span class="small dim">Live Multi-Stage Threat Injection</span>
+        </div>
+        <div class="panel-body" style="display: flex; flex-direction: column; gap: 16px;">
+          <!-- Scenario 1 -->
+          <div style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 14px;">
+            <div class="flex items-center justify-between">
+              <div>
+                <b style="font-size: 13.5px; color: var(--text-primary);">Multi-Stage Targeted Intrusion</b>
+                <div class="small dim" style="margin-top: 2px;">
+                  Simulates password brute-force &rarr; anomalous geolocation login &rarr; privilege escalation (`sudo`) &rarr; bulk S3 exfiltration.
+                </div>
+              </div>
+              <span class="tag critical">High Fidelity</span>
+            </div>
+            <div style="margin-top: 12px; display: flex; align-items: center; gap: 10px;">
+              <select id="simTargetUser" class="form-input" style="width: 140px;">
+                <option value="alice">Target: alice</option>
+                <option value="bob">Target: bob</option>
+                <option value="charlie">Target: charlie</option>
+                <option value="david">Target: david</option>
+                <option value="eve">Target: eve</option>
+                <option value="frank">Target: frank</option>
+                <option value="grace">Target: grace</option>
+                <option value="heidi">Target: heidi</option>
+              </select>
+              <button id="btnLaunchTargetedAttack" class="btn btn-danger">
+                <i class="ph-bold ph-skull"></i> Execute Multi-Stage Attack
+              </button>
+            </div>
+          </div>
+
+          <!-- Scenario 2 -->
+          <div style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 14px;">
+            <div class="flex items-center justify-between">
+              <div>
+                <b style="font-size: 13.5px; color: var(--text-primary);">Distributed Password Spraying</b>
+                <div class="small dim" style="margin-top: 2px;">
+                  Attacker IP conducts single failed login attempts across 5 employee accounts before successfully compromising one.
+                </div>
+              </div>
+              <span class="tag high">Credential Access</span>
+            </div>
+            <div style="margin-top: 12px;">
+              <button class="btn btn-secondary sim-trigger" data-sim="/simulate/spray">
+                <i class="ph-bold ph-crosshair"></i> Execute Password Spray
+              </button>
+            </div>
+          </div>
+
+          <!-- Scenario 3 -->
+          <div style="background: var(--bg-surface-elevated); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 14px;">
+            <div class="flex items-center justify-between">
+              <div>
+                <b style="font-size: 13.5px; color: var(--text-primary);">AWS CloudTrail Stolen Key Replay</b>
+                <div class="small dim" style="margin-top: 2px;">
+                  Replays real CloudTrail telemetry: compromised IAM access key, privilege escalation via admin policy attachment, CloudTrail logging disruption, and S3 exfil.
+                </div>
+              </div>
+              <span class="tag low">Cloud Defense</span>
+            </div>
+            <div style="margin-top: 12px;">
+              <button class="btn btn-secondary sim-trigger" data-sim="/simulate/cloud-attack">
+                <i class="ph-bold ph-cloud-arrow-down"></i> Replay CloudTrail Breach
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CloudTrail Telemetry Ingestor -->
+      <div class="panel">
+        <div class="panel-header">
+          <h3 class="panel-title"><i class="ph-bold ph-upload-simple"></i> External CloudTrail Log Ingestor</h3>
+          <span class="small dim">AWS CloudTrail Ingestion API</span>
+        </div>
+        <div class="panel-body" style="display: flex; flex-direction: column; gap: 12px;">
+          <p class="small dim" style="margin: 0;">
+            Paste external AWS CloudTrail JSON records (array or <code>{"Records": [...]}</code> format) to test streaming ingestion, rule detection, and correlation.
+          </p>
+          <textarea id="txtCloudtrailJson" class="form-input mono" rows="12" placeholder='{"Records": [ { "eventVersion": "1.08", "userIdentity": { ... }, "eventName": "ConsoleLogin", ... } ]}' style="resize: vertical; font-size: 11px;"></textarea>
+
+          <div class="flex items-center justify-between">
+            <label class="flex items-center gap-6 small muted" style="cursor: pointer;">
+              <input type="checkbox" id="chkRebaseCloudtrail" checked style="cursor: pointer;"> Rebase historical event timestamps to current time
+            </label>
+            <button id="btnIngestCloudtrail" class="btn btn-primary">
+              <i class="ph-bold ph-paper-plane-tilt"></i> Ingest Telemetry Records
+            </button>
+          </div>
+          <div id="ingestFeedback" style="display: none; padding: 8px 12px; border-radius: 6px; font-size: 11.5px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ==========================================================================
+     GLOBAL TOAST NOTIFICATIONS CONTAINER
+     ========================================================================== -->
+<div id="toastContainer"></div>
+
+<!-- ==========================================================================
+     FRONTEND JAVASCRIPT APPLICATION CORE
+     ========================================================================== -->
+<script>
+"use strict";
+
+// Global Application State
+const AppState = {
+  incidents: {},
+  actions: {},
+  selectedIncident: null,
+  investigating: [],
+  stats: {},
+  activePage: "overview",
+  auditRows: [],
+  auditSig: "",
+  confirmingActionId: null,
+  consoleHistory: []
+};
+
+const SEV_WEIGHT = { low: 1, medium: 2, high: 3, critical: 4 };
+const STATUS_LABELS = {
+  executed: "Executed",
+  verified: "Verified",
+  verification_failed: "Verification Failed",
+  failed: "Execution Failed",
+  rejected: "Rejected",
+  withdrawn: "Withdrawn",
+  pending_approval: "Pending Approval",
+  approved: "Approved",
+  queued: "Queued",
+  executing: "Executing"
+};
+
+// Safe HTML Escape
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({
+  "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+}[c]));
+
+const hms = ts => new Date(ts * 1000).toLocaleTimeString([], { hour12: false });
+const formatBytes = n => {
+  if (n >= 1e9) return (n / 1e9).toFixed(1) + " GB";
+  if (n >= 1e6) return (n / 1e6).toFixed(1) + " MB";
+  if (n >= 1e3) return (n / 1e3).toFixed(0) + " KB";
+  return n + " B";
+};
+const safeSev = s => Object.hasOwn(SEV_WEIGHT, s) ? s : "low";
+
+// --------------------------------------------------------------------------
+// THEME SWITCHER (Light / Dark Mode with Persistence)
+// --------------------------------------------------------------------------
+function initTheme() {
+  const saved = localStorage.getItem("sentinel_theme");
+  const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const initial = saved || (prefersDark ? "dark" : "dark"); // Default dark for security SOC
+  setTheme(initial);
+}
+
+function setTheme(theme) {
+  const isDark = theme === "dark";
+  document.documentElement.className = isDark ? "theme-dark" : "theme-light";
+  localStorage.setItem("sentinel_theme", theme);
+  const icon = document.getElementById("themeIcon");
+  if (icon) {
+    icon.className = isDark ? "ph-bold ph-sun" : "ph-bold ph-moon";
+  }
+  // Re-render SVG charts to adapt to theme colors
+  renderOverviewCharts();
+}
+
+document.getElementById("themeToggleBtn").addEventListener("click", () => {
+  const isDark = document.documentElement.classList.contains("theme-dark");
+  setTheme(isDark ? "light" : "dark");
+});
+initTheme();
+
+// --------------------------------------------------------------------------
+// PAGE ROUTING & NAVIGATION
+// --------------------------------------------------------------------------
+function goToPage(pageName) {
+  AppState.activePage = pageName;
+  document.querySelectorAll(".nav-item").forEach(item => {
+    item.classList.toggle("active", item.dataset.page === pageName);
+  });
+  document.querySelectorAll(".page-view").forEach(view => {
+    view.hidden = (view.id !== "page-" + pageName);
+  });
+
+  location.hash = "#/" + pageName + (AppState.selectedIncident ? ":" + AppState.selectedIncident : "");
+
+  // Page specific hooks
+  if (pageName === "audit") loadAudit();
+  if (pageName === "overview") renderOverviewCharts();
+  if (pageName === "incidents") {
+    renderIncidentsList();
+    renderIncidentDossier();
+  }
+  if (pageName === "actions") renderResponseCenter();
+  if (pageName === "containment") updateContainmentPresets();
+}
+
+document.querySelectorAll("#mainNav .nav-item").forEach(btn => {
+  btn.addEventListener("click", () => goToPage(btn.dataset.page));
+});
+
+window.addEventListener("hashchange", handleHashRouting);
+function handleHashRouting() {
+  const raw = location.hash.replace("#/", "");
+  const [page, incId] = raw.split(":");
+  if (incId && AppState.incidents[incId]) {
+    AppState.selectedIncident = incId;
+  }
+  if (["overview", "incidents", "actions", "containment", "audit", "simulation"].includes(page)) {
+    goToPage(page);
+  }
+}
+
+// --------------------------------------------------------------------------
+// TOAST NOTIFICATION SYSTEM
+// --------------------------------------------------------------------------
+const toastRegistry = {};
+function showToast(message, severity = "info", key = null) {
+  const container = document.getElementById("toastContainer");
+  let el = key && toastRegistry[key];
+  if (!el) {
+    el = document.createElement("div");
+    container.appendChild(el);
+    if (key) toastRegistry[key] = el;
+    while (container.childElementCount > 6) container.firstChild.remove();
+  }
+
+  const iconName = severity === "critical" ? "ph-siren" :
+                   severity === "high" ? "ph-warning-octagon" :
+                   severity === "medium" ? "ph-warning" :
+                   severity === "ok" ? "ph-check-circle" : "ph-info";
+
+  el.className = `toast-card ${safeSev(severity)}`;
+  el.innerHTML = `
+    <i class="ph-bold ${iconName}" style="font-size: 16px; margin-top: 1px;"></i>
+    <div style="flex:1;">${esc(message)}</div>
+    <button style="background:none;border:none;color:var(--text-muted);cursor:pointer;padding:0;" onclick="this.parentElement.remove()">
+      <i class="ph-bold ph-x"></i>
+    </button>
+  `;
+
+  clearTimeout(el._timer);
+  el._timer = setTimeout(() => {
+    el.remove();
+    if (key && toastRegistry[key] === el) delete toastRegistry[key];
+  }, 6000);
+}
+
+// --------------------------------------------------------------------------
+// WEBSOCKET COMMUNICATION & LIVE DATA BUS
+// --------------------------------------------------------------------------
+let socket = null;
+function initWebSocket() {
+  const proto = location.protocol === "https:" ? "wss://" : "ws://";
+  const url = proto + location.host + "/ws";
+  socket = new WebSocket(url);
+
+  socket.onopen = () => {
+    const pill = document.getElementById("wsPill");
+    pill.className = "status-pill ok";
+    document.getElementById("wsText").textContent = "Live Stream Active";
+  };
+
+  socket.onmessage = ev => {
+    try {
+      const msg = JSON.parse(ev.data);
+      handleSocketMessage(msg.type, msg.data);
+    } catch (e) {
+      console.error("WebSocket message parse error:", e);
+    }
+  };
+
+  socket.onclose = () => {
+    const pill = document.getElementById("wsPill");
+    pill.className = "status-pill crit";
+    document.getElementById("wsText").textContent = "Disconnected (Reconnecting...)";
+    setTimeout(initWebSocket, 2000);
+  };
+}
+
+function handleSocketMessage(type, data) {
+  switch (type) {
+    case "snapshot":
+      AppState.incidents = Object.fromEntries(data.incidents.map(i => [i.id, i]));
+      AppState.actions = Object.fromEntries(data.actions.map(a => [a.id, a]));
+      AppState.investigating = data.investigating || [];
+      AppState.stats = data.stats || {};
+
+      const feed = document.getElementById("liveFeed");
+      feed.innerHTML = "";
+      document.getElementById("liveFeedEmpty").hidden = data.events.length > 0;
+      data.events.forEach(addFeedEvent);
+
+      if (!AppState.incidents[AppState.selectedIncident]) {
+        AppState.selectedIncident = getSortedIncidents()[0]?.id || null;
+      }
+      renderAll();
+      break;
+
+    case "event":
+      addFeedEvent(data);
+      break;
+
+    case "alert":
+      addFeedAlert(data);
+      renderOverviewCharts();
+      break;
+
+    case "incident":
+      const prev = AppState.incidents[data.id];
+      AppState.incidents[data.id] = data;
+      if (!AppState.selectedIncident) AppState.selectedIncident = data.id;
+
+      if (data.status !== "closed") {
+        if (!prev) {
+          showToast(`New Incident Detected [${data.id}] — Severity: ${data.severity.toUpperCase()}, Risk: ${data.risk?.score ?? '?'}`, data.severity, "inc:" + data.id);
+        } else if (SEV_WEIGHT[data.severity] > SEV_WEIGHT[prev.severity] || (data.risk?.score > prev.risk?.score)) {
+          showToast(`Incident Escalation [${data.id}] — Severity: ${data.severity.toUpperCase()}, Risk: ${data.risk?.score}`, data.severity, "esc:" + data.id);
+        }
+      }
+
+      renderAll();
+      break;
+
+    case "action":
+      AppState.actions[data.id] = data;
+      renderKPIs();
+      renderResponseCenter();
+      if (data.incident_id === AppState.selectedIncident) renderIncidentDossier();
+      break;
+
+    case "agent":
+      AppState.investigating = data.investigating || [];
+      renderAgentStatus();
+      if (AppState.activePage === "incidents") renderIncidentsList();
+      break;
+
+    case "stats":
+      AppState.stats = data;
+      renderKPIs();
+      renderOverviewCharts();
+      break;
+  }
+}
+
+// --------------------------------------------------------------------------
+// TELEMETRY LIVE FEED
+// --------------------------------------------------------------------------
+const FEED_MAX_ROWS = 200;
+function addFeedEvent(e) {
+  const src = e.source || "unknown";
+  const srcClass = "src-" + src;
+  const kindCls = (e.source === "attack_injector" ? "attack " :
+                   e.action === "login_failed" ? "fail " :
+                   e.source === "system_collector" || e.source === "cloudtrail" ? "collector " : "") + srcClass;
+
+  const html = `
+    <span class="dim">${hms(e.ts)}</span>
+    <span class="tag ${e.source === 'attack_injector' ? 'critical' : 'indigo'}" style="font-size:9.5px;padding:0 5px;">${esc(e.source)}</span>
+    <span style="color:var(--text-primary);">${esc(e.user || '-')}</span>
+    <span class="mono dim">${esc(e.ip || '-')}</span>
+    <span class="dim">${esc(e.country || '')}</span>
+    <span class="dim">${esc(e.host || '')}</span>
+    <b style="color:var(--text-primary);">${esc(e.action)}</b>
+    <span class="dim mono">${formatBytes(e.bytes || 0)}</span>
+  `;
+
+  insertFeedRow(html, kindCls, "event", e.source);
+}
+
+function addFeedAlert(a) {
+  const html = `
+    <span class="dim">${hms(a.ts)}</span>
+    <span class="tag ${safeSev(a.severity)}"><i class="ph-bold ph-warning"></i> ALERT [${esc(a.severity.toUpperCase())}]</span>
+    <b style="color:var(--text-primary);">${esc(a.type)}</b>
+    <span class="mono">${esc(a.entity)}</span>
+    <span class="dim">${esc(a.detail)}</span>
+  `;
+  insertFeedRow(html, "alert s-" + safeSev(a.severity), "alert", "");
+}
+
+function insertFeedRow(innerHtml, extraClass, kind, source) {
+  const feed = document.getElementById("liveFeed");
+  const row = document.createElement("div");
+  row.className = "feed-row " + extraClass;
+  row.dataset.kind = kind;
+  if (source) row.dataset.source = source;
+  row.innerHTML = innerHtml;
+
+  feed.insertBefore(row, feed.firstChild);
+  document.getElementById("liveFeedEmpty").hidden = true;
+  while (feed.childElementCount > FEED_MAX_ROWS) feed.lastChild.remove();
+}
+
+// Feed Filter Controls
+document.getElementById("chkAlertsOnly").addEventListener("change", function() {
+  document.getElementById("liveFeed").classList.toggle("filter-alerts-only", this.checked);
+});
+document.getElementById("selFeedSource").addEventListener("change", function() {
+  const feed = document.getElementById("liveFeed");
+  ["traffic_gen", "attack_injector", "system_collector", "cloudtrail"].forEach(s => feed.classList.remove("filter-src-" + s));
+  if (this.value !== "all") {
+    feed.classList.add("filter-src-" + this.value);
+  }
+});
+
+// --------------------------------------------------------------------------
+// EXECUTIVE STATUS & KPI RENDERING (End-User Centric SOC)
+// --------------------------------------------------------------------------
+function renderAgentStatus() {
+  const agentEl = document.getElementById("agentStatus");
+  const agentText = document.getElementById("agentText");
+
+  if (AppState.investigating.length > 0) {
+    agentEl.className = "status-pill active pulse-glow";
+    agentText.textContent = `Autonomous Analyst: Investigating (${AppState.investigating.length} Active)`;
+    agentEl.title = `Currently investigating: ${AppState.investigating.join(", ")}`;
+  } else {
+    agentEl.className = "status-pill ok";
+    agentText.textContent = "Autonomous Defense: Active Monitoring";
+    agentEl.title = "Continuous baseline monitoring active. Zero unhandled escalations.";
+  }
+
+  // AI Forensic Core Provenance
+  let latestInv = null;
+  for (const i of Object.values(AppState.incidents)) {
+    if (i.investigation && (!latestInv || i.investigation.investigated_at > latestInv.investigated_at)) {
+      latestInv = i.investigation;
+    }
+  }
+
+  const aiPill = document.getElementById("aiEngineStatus");
+  const aiText = document.getElementById("aiEngineText");
+  if (latestInv) {
+    aiPill.className = "status-pill " + (latestInv.source === "fallback" ? "warn" : "ok");
+    aiText.textContent = `AI Core: ${latestInv.source.toUpperCase()}${latestInv.model ? ' (' + latestInv.model + ')' : ''}`;
+    aiPill.title = `Latest triage confidence: ${Math.round((latestInv.confidence || 0) * 100)}% | Tools: ${latestInv.tool_calls || 0}`;
+  } else {
+    aiPill.className = "status-pill";
+    aiText.textContent = "AI Forensic Core: Ready";
+  }
+
+  // System Posture Score
+  const activeIncs = Object.values(AppState.incidents).filter(i => i.status !== "closed");
+  const critCount = activeIncs.filter(i => i.severity === "critical").length;
+  const posturePill = document.getElementById("postureStatus");
+  const postureText = document.getElementById("postureText");
+
+  if (critCount > 0) {
+    posturePill.className = "status-pill crit pulse-glow";
+    postureText.textContent = `Posture: Critical Threat Active (${critCount})`;
+  } else if (activeIncs.length > 0) {
+    posturePill.className = "status-pill warn pulse-glow";
+    postureText.textContent = `Posture: Elevated (${activeIncs.length} Incidents)`;
+  } else {
+    posturePill.className = "status-pill ok pulse-glow";
+    postureText.textContent = "Posture: Protected (Normal)";
+  }
+}
+
+function renderKPIs() {
+  const activeIncs = Object.values(AppState.incidents).filter(i => i.status !== "closed");
+  const critIncs = activeIncs.filter(i => i.severity === "critical").length;
+  const pendActions = Object.values(AppState.actions).filter(a => a.status === "pending_approval").length;
+
+  document.getElementById("k-eps").textContent = AppState.stats.eps ?? 0;
+  document.getElementById("k-events").textContent = (AppState.stats.stored ?? 0).toLocaleString();
+  document.getElementById("k-active").textContent = activeIncs.length;
+  document.getElementById("k-crit").textContent = critIncs;
+  document.getElementById("k-alerts").textContent = (AppState.stats.alerts_total ?? 0).toLocaleString();
+  document.getElementById("k-pending").textContent = pendActions;
+
+  document.getElementById("queue").textContent = AppState.stats.queue ?? 0;
+  document.getElementById("dropped").textContent = AppState.stats.dropped ?? 0;
+
+  // Header RPA status
+  const rpaPill = document.getElementById("rpaStatus");
+  const rpaText = document.getElementById("rpaText");
+  const botOnline = !!AppState.stats.rpa_bot_online;
+  rpaPill.className = "status-pill " + (botOnline ? "ok" : "warn");
+  rpaText.textContent = botOnline ? "Playbook Engine: UiPath Online" : "Playbook Engine: Built-in Active";
+
+  // Badges in Nav
+  const bInc = document.getElementById("badgeIncidents");
+  const bAct = document.getElementById("badgeApprovals");
+  bInc.textContent = activeIncs.length || "";
+  bAct.textContent = pendActions || "";
+  bAct.classList.toggle("hot", pendActions > 0);
+
+  renderAgentStatus();
+}
+
+function getSortedIncidents() {
+  return Object.values(AppState.incidents).sort((a, b) => {
+    const aClosed = a.status === "closed" ? 1 : 0;
+    const bClosed = b.status === "closed" ? 1 : 0;
+    if (aClosed !== bClosed) return aClosed - bClosed;
+    const aRisk = a.risk?.score ?? -1;
+    const bRisk = b.risk?.score ?? -1;
+    if (bRisk !== aRisk) return bRisk - aRisk;
+    return (b.updated_ts || 0) - (a.updated_ts || 0);
+  });
+}
+
+// --------------------------------------------------------------------------
+// CHARTS & ANALYTICS RENDERING
+// --------------------------------------------------------------------------
+function renderOverviewCharts() {
+  renderEpsTimeSeries();
+  renderAlertsBarChart();
+  renderIncidentDonutChart();
+  renderTopEntitiesChart();
+}
+
+function renderEpsTimeSeries() {
+  const box = document.getElementById("chartEpsBox");
+  if (!box) return;
+  const series = AppState.stats.eps_series || [];
+  const pts = series.length ? series : new Array(60).fill(0);
+  const maxVal = Math.max(1, ...pts);
+  const curEps = AppState.stats.eps ?? pts[pts.length - 1] ?? 0;
+
+  const w = 340, h = 135;
+  const pl = 30, pr = 10, pt = 14, pb = 20;
+  const cw = w - pl - pr;
+  const ch = h - pt - pb;
+
+  const coords = pts.map((v, i) => {
+    const x = pl + (i / (pts.length - 1 || 1)) * cw;
+    const y = (h - pb) - (Math.min(v, maxVal) / maxVal) * ch;
+    return [x.toFixed(1), y.toFixed(1)];
+  });
+
+  const lineStr = coords.map(c => c.join(",")).join(" ");
+  const areaStr = `${pl},${h - pb} ${lineStr} ${pl + cw},${h - pb}`;
+  const last = coords[coords.length - 1];
+
+  box.innerHTML = `
+    <svg viewBox="0 0 ${w} ${h}" width="100%" height="100%" style="display:block;">
+      <defs>
+        <linearGradient id="epsGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="var(--chart-line)" stop-opacity="0.35"/>
+          <stop offset="100%" stop-color="var(--secondary)" stop-opacity="0.02"/>
+        </linearGradient>
+      </defs>
+      <line x1="${pl}" y1="${pt}" x2="${w - pr}" y2="${pt}" stroke="var(--chart-grid)" stroke-dasharray="3 3"/>
+      <text x="${pl - 4}" y="${pt + 4}" fill="var(--text-muted)" font-size="9" text-anchor="end" class="mono">${maxVal}</text>
+      <line x1="${pl}" y1="${h - pb}" x2="${w - pr}" y2="${h - pb}" stroke="var(--border-subtle)"/>
+      <text x="${pl - 4}" y="${h - pb + 3}" fill="var(--text-muted)" font-size="9" text-anchor="end" class="mono">0</text>
+      <text x="${pl}" y="${h - 4}" fill="var(--text-muted)" font-size="8.5">-60s</text>
+      <text x="${w - pr}" y="${h - 4}" fill="var(--text-muted)" font-size="8.5" text-anchor="end">now (${curEps} eps)</text>
+      <polygon points="${areaStr}" fill="url(#epsGrad)"/>
+      <polyline points="${lineStr}" fill="none" stroke="var(--chart-line)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle cx="${last[0]}" cy="${last[1]}" r="3.5" fill="var(--secondary)"/>
+    </svg>
+  `;
+}
+
+function renderAlertsBarChart() {
+  const box = document.getElementById("chartAlertsBox");
+  if (!box) return;
+  const raw = AppState.stats.alerts_by_type || {};
+  const entries = Object.entries(raw).filter(([_, c]) => c > 0).sort((a, b) => b[1] - a[1]);
+  if (!entries.length) {
+    box.innerHTML = '<div class="empty-state" style="padding:24px 0;"><i class="ph-bold ph-bell-slash"></i><div class="small">No alerts logged</div></div>';
+    return;
+  }
+
+  const top = entries.slice(0, 5);
+  const max = Math.max(1, ...top.map(e => e[1]));
+
+  box.innerHTML = '<div style="display:flex; flex-direction:column; gap:6px;">' + top.map(([type, cnt]) => {
+    const pct = Math.min(100, Math.round((cnt / max) * 100));
+    return `
+      <div style="display:flex; flex-direction:column; gap:2px;">
+        <div style="display:flex; justify-content:space-between; font-size:11px;">
+          <span class="ellipsis mono" style="color:var(--text-primary); max-width:180px;" title="${esc(type)}">${esc(type)}</span>
+          <span class="mono bolder" style="color:var(--secondary);">${cnt}</span>
+        </div>
+        <div style="width:100%; height:4px; background:var(--bg-surface-muted); border-radius:999px; overflow:hidden;">
+          <div style="width:${pct}%; height:100%; background:linear-gradient(90deg, var(--primary), var(--secondary)); border-radius:999px;"></div>
+        </div>
+      </div>
+    `;
+  }).join("") + '</div>';
+}
+
+function renderIncidentDonutChart() {
+  const box = document.getElementById("chartIncidentsBox");
+  if (!box) return;
+  const d = AppState.stats.incidents_by_severity || { low: 0, medium: 0, high: 0, critical: 0 };
+  const total = (d.low || 0) + (d.medium || 0) + (d.high || 0) + (d.critical || 0);
+
+  const r = 32, C = 2 * Math.PI * r;
+  let circles = "";
+  if (total === 0) {
+    circles = `<circle cx="45" cy="45" r="${r}" stroke="var(--border-subtle)" stroke-width="9" fill="none"/>`;
+  } else {
+    let offset = 0;
+    const sevs = [
+      { key: "critical", color: "var(--crit)" },
+      { key: "high", color: "var(--high)" },
+      { key: "medium", color: "var(--med)" },
+      { key: "low", color: "var(--low)" }
+    ];
+    circles = `<g transform="rotate(-90 45 45)">` + sevs.map(s => {
+      const cnt = d[s.key] || 0;
+      if (cnt <= 0) return "";
+      const len = (cnt / total) * C;
+      const c = `<circle cx="45" cy="45" r="${r}" stroke="${s.color}" stroke-width="9" fill="none"
+                        stroke-dasharray="${len.toFixed(2)} ${(C - len).toFixed(2)}"
+                        stroke-dashoffset="${(-offset).toFixed(2)}"/>`;
+      offset += len;
+      return c;
+    }).join("") + `</g>`;
+  }
+
+  box.innerHTML = `
+    <div style="display:flex; align-items:center; justify-content:space-around; height:100%;">
+      <svg width="86" height="86" viewBox="0 0 90 90">
+        ${circles}
+        <text x="45" y="49" text-anchor="middle" font-size="16" font-weight="800" fill="var(--text-primary)">${total}</text>
+        <text x="45" y="59" text-anchor="middle" font-size="7.5" font-weight="600" fill="var(--text-muted)" letter-spacing="0.05em">ACTIVE</text>
+      </svg>
+      <div style="display:flex; flex-direction:column; gap:4px; font-size:10.5px;">
+        <div class="flex items-center gap-6"><span style="width:7px; height:7px; border-radius:50%; background:var(--crit)"></span><span class="muted">Critical</span><b class="mono" style="margin-left:auto;">${d.critical || 0}</b></div>
+        <div class="flex items-center gap-6"><span style="width:7px; height:7px; border-radius:50%; background:var(--high)"></span><span class="muted">High</span><b class="mono" style="margin-left:auto;">${d.high || 0}</b></div>
+        <div class="flex items-center gap-6"><span style="width:7px; height:7px; border-radius:50%; background:var(--med)"></span><span class="muted">Medium</span><b class="mono" style="margin-left:auto;">${d.medium || 0}</b></div>
+        <div class="flex items-center gap-6"><span style="width:7px; height:7px; border-radius:50%; background:var(--low)"></span><span class="muted">Low</span><b class="mono" style="margin-left:auto;">${d.low || 0}</b></div>
+      </div>
+    </div>
+  `;
+}
+
+function renderTopEntitiesChart() {
+  const box = document.getElementById("topEntitiesBox");
+  if (!box) return;
+  const ips = AppState.stats.top_ips || [];
+  const countries = AppState.stats.top_countries || [];
+
+  function makeList(list, label) {
+    if (!list.length) return `<div class="empty-state" style="padding:10px 0;"><div class="xs dim">No ${label} data</div></div>`;
+    const max = Math.max(1, ...list.map(x => x.count));
+    return list.slice(0, 3).map((item, idx) => {
+      const pct = Math.min(100, Math.round((item.count / max) * 100));
+      return `
+        <div style="display:flex; align-items:center; gap:6px; font-size:11px;">
+          <span class="dim xs mono" style="width:10px;">${idx + 1}</span>
+          <span class="ellipsis mono" style="flex:1; color:var(--text-primary); font-size:11px;">${esc(item.key)}</span>
+          <div style="width:36px; height:4px; background:var(--bg-surface-muted); border-radius:2px; overflow:hidden;">
+            <div style="width:${pct}%; height:100%; background:var(--secondary);"></div>
+          </div>
+          <span class="mono xs bolder" style="color:var(--text-secondary); min-width:18px; text-align:right;">${item.count}</span>
+        </div>
+      `;
+    }).join("");
+  }
+
+  box.innerHTML = `
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px; height:100%;">
+      <div style="display:flex; flex-direction:column; gap:4px;">
+        <div class="xs bolder dim" style="letter-spacing:0.04em;">TOP SOURCE IPS</div>
+        ${makeList(ips, "IP")}
+      </div>
+      <div style="display:flex; flex-direction:column; gap:4px;">
+        <div class="xs bolder dim" style="letter-spacing:0.04em;">ORIGIN COUNTRIES</div>
+        ${makeList(countries, "Country")}
+      </div>
+    </div>
+  `;
+}
+
+// --------------------------------------------------------------------------
+// INCIDENT MANAGEMENT & FORENSIC DOSSIER
+// --------------------------------------------------------------------------
+function renderIncidentsList() {
+  const ovContainer = document.getElementById("overviewIncidentsList");
+  const fullContainer = document.getElementById("incidentsList");
+  const filterText = (document.getElementById("incFilterSearch")?.value || "").toLowerCase().trim();
+
+  let list = getSortedIncidents();
+  if (filterText) {
+    list = list.filter(i => {
+      const hay = [i.id, i.severity, i.status, ...(i.alert_types || []), ...(i.entities || [])].join(" ").toLowerCase();
+      return hay.includes(filterText);
+    });
+  }
+
+  const countBadge = document.getElementById("incidentsQueueCount");
+  if (countBadge) countBadge.textContent = `${list.length} incident${list.length === 1 ? '' : 's'}`;
+
+  const renderHtml = (items, isOverview) => {
+    if (!items.length) {
+      return `
+        <div class="empty-state" style="padding: 30px 14px;">
+          <i class="ph-bold ph-shield-check"></i>
+          <div>No incidents matching criteria</div>
+        </div>
+      `;
+    }
+
+    return items.map(inc => {
+      const isSel = inc.id === AppState.selectedIncident;
+      const isClosed = inc.status === "closed";
+      const isBusy = AppState.investigating.includes(inc.id);
+      const r = inc.risk || { score: "—", level: "low" };
+
+      const typeChips = (inc.alert_types || []).slice(0, 3).map(t =>
+        `<span class="chip" style="font-size:10px;">${esc(t)}</span>`
+      ).join("") + ((inc.alert_types || []).length > 3 ? `<span class="chip" style="font-size:10px;">+${inc.alert_types.length - 3}</span>` : "");
+
+      const fbBadge = inc.feedback ? (
+        inc.feedback.label === "false_positive" ?
+        `<span class="tag ok" style="font-size:9.5px; padding:0 4px;"><i class="ph-bold ph-check"></i> FP RESOLVED</span>` :
+        `<span class="tag critical" style="font-size:9.5px; padding:0 4px;"><i class="ph-bold ph-siren"></i> CONFIRMED</span>`
+      ) : '';
+
+      return `
+        <div class="incident-row ${isSel ? 'selected' : ''} ${isClosed ? 'closed' : ''}" data-id="${esc(inc.id)}">
+          <div class="risk-chip ${safeSev(r.level)}" title="Deterministic Risk Score: ${esc(r.score)}/100">
+            ${esc(r.score)}
+          </div>
+          <div class="incident-body">
+            <div class="flex items-center gap-6">
+              <b style="font-size:12.5px; color:var(--text-primary);">${esc(inc.id)}</b>
+              <span class="tag ${safeSev(inc.severity)}" style="font-size:9.5px;">${esc(inc.severity)}</span>
+              ${fbBadge}
+              ${isBusy ? '<span class="status-pill active pulse-glow xs" style="padding:1px 6px;">Analyst Triaging...</span>' : ''}
+              <span class="dim xs mono" style="margin-left:auto;">${hms(inc.updated_ts)}</span>
+            </div>
+            <div style="display:flex; flex-wrap:wrap; gap:3px; margin-top:2px;">
+              ${typeChips}
+            </div>
+          </div>
+        </div>
+      `;
+    }).join("");
+  };
+
+  if (ovContainer) ovContainer.innerHTML = renderHtml(list.slice(0, 8), true);
+  if (fullContainer) fullContainer.innerHTML = renderHtml(list, false);
+}
+
+document.getElementById("incFilterSearch")?.addEventListener("input", renderIncidentsList);
+
+// Incident selection click
+document.body.addEventListener("click", ev => {
+  const row = ev.target.closest(".incident-row");
+  if (row) {
+    AppState.selectedIncident = row.dataset.id;
+    renderIncidentsList();
+    renderIncidentDossier();
+    if (AppState.activePage === "overview") goToPage("incidents");
+  }
+});
+
+// --------------------------------------------------------------------------
+// INCIDENT FORENSIC DOSSIER RENDERING
+// --------------------------------------------------------------------------
+function renderIncidentDossier() {
+  const box = document.getElementById("incidentDetailBox");
+  if (!box) return;
+  const inc = AppState.incidents[AppState.selectedIncident];
+  if (!inc) {
+    box.innerHTML = `
+      <div class="empty-state" style="padding:60px 20px;">
+        <i class="ph-bold ph-shield-check"></i>
+        <div class="bold">No Incident Selected</div>
+        <div class="small dim">Select an incident from the queue to view forensics.</div>
+      </div>
+    `;
+    return;
+  }
+
+  const r = inc.risk || { score: 0, level: "low", justification: "Awaiting evaluation", final: false };
+  const inv = inc.investigation;
+
+  // Header badges
+  const metaBadges = document.getElementById("dossierMetaBadges");
+  if (metaBadges) {
+    metaBadges.innerHTML = `
+      <span class="tag ${safeSev(inc.severity)}"><i class="ph-bold ph-shield-warning"></i> ${esc(inc.severity.toUpperCase())}</span>
+      <span class="chip mono">${esc(inc.status.toUpperCase())}</span>
+      <span class="small dim">${hms(inc.updated_ts)}</span>
+    `;
+  }
+
+  // Circular Risk Gauge SVG
+  const scoreVal = Math.min(100, Math.max(0, Number(r.score) || 0));
+  const gaugeR = 24, gaugeC = 2 * Math.PI * gaugeR;
+  const gaugeDash = (scoreVal / 100) * gaugeC;
+  const gaugeColor = `var(--${safeSev(r.level)})`;
+
+  const gaugeSvg = `
+    <svg width="60" height="60" viewBox="0 0 60 60" style="flex-shrink:0;">
+      <circle cx="30" cy="30" r="${gaugeR}" stroke="var(--bg-surface-muted)" stroke-width="5.5" fill="none"/>
+      <g transform="rotate(-90 30 30)">
+        <circle cx="30" cy="30" r="${gaugeR}" stroke="${gaugeColor}" stroke-width="5.5" fill="none"
+                stroke-dasharray="${gaugeDash.toFixed(1)} ${(gaugeC - gaugeDash).toFixed(1)}" stroke-linecap="round"/>
+      </g>
+      <text x="30" y="35" text-anchor="middle" font-size="16" font-weight="800" fill="${gaugeColor}" class="mono">${scoreVal}</text>
+    </svg>
+  `;
+
+  // Risk Breakdown Rows
+  let breakdownTable = "";
+  if (r.breakdown && r.breakdown.length) {
+    const rows = r.breakdown.map(b => `
+      <tr style="border-bottom:1px solid var(--border-subtle);">
+        <td style="padding:4px 8px; font-weight:600; text-transform:capitalize;">${esc(b.factor)}</td>
+        <td style="padding:4px 8px; font-family:'JetBrains Mono',monospace; color:var(--text-secondary);">${esc(b.value)}</td>
+        <td style="padding:4px 8px; text-align:right; font-weight:700; color:var(--primary); font-family:'JetBrains Mono',monospace;">+${esc(b.points)} pts</td>
+      </tr>
+    `).join("");
+
+    breakdownTable = `
+      <div style="background:var(--bg-surface-elevated); border:1px solid var(--border-subtle); border-radius:8px; padding:10px 12px; margin:12px 0;">
+        <div class="xs bolder dim" style="letter-spacing:0.04em; margin-bottom:6px;">DETERMINISTIC RISK SCORE BREAKDOWN (${r.score}/100)</div>
+        <table style="width:100%; border-collapse:collapse; font-size:11.5px;">
+          <thead>
+            <tr style="color:var(--text-muted); text-align:left; border-bottom:1px solid var(--border-subtle); font-size:10px;">
+              <th style="padding:2px 8px;">FACTOR</th>
+              <th style="padding:2px 8px;">MEASURED METRIC</th>
+              <th style="padding:2px 8px; text-align:right;">WEIGHT</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+        ${r.llm_influence ? `<div class="xs muted" style="margin-top:6px;"><i class="ph-bold ph-sparkle" style="color:var(--primary)"></i> <b>AI Forensic Impact:</b> ${esc(r.llm_influence)}</div>` : ''}
+      </div>
+    `;
+  }
+
+  // Analyst Triage Action Box
+  const fb = inc.feedback;
+  const isFP = fb && fb.label === "false_positive";
+  const isConf = fb && fb.label === "confirmed";
+
+  const feedbackBox = `
+    <div style="background:var(--bg-surface-elevated); border:1px solid var(--border-subtle); border-radius:8px; padding:12px 14px; margin:12px 0;">
+      <div class="flex items-center justify-between" style="margin-bottom:8px;">
+        <div class="xs bolder dim" style="letter-spacing:0.04em;"><i class="ph-bold ph-hand-palm" style="color:var(--primary)"></i> ANALYST ADJUDICATION &amp; TRIAGE DECISION</div>
+        ${fb ? `<span class="tag ${isFP ? 'ok' : 'critical'}"><i class="ph-bold ${isFP ? 'ph-check' : 'ph-siren'}"></i> ${isFP ? 'Marked False Positive' : 'Confirmed True Positive'}</span>` : ''}
+      </div>
+      <div class="flex items-center gap-8">
+        <input type="text" id="inputFbNote" class="form-input" placeholder="Optional analyst triage notes (e.g. authorized red team exercise, confirmed exfil)..." value="${esc(fb?.note || '')}" style="flex:1;">
+        <button id="btnFbFp" class="btn btn-secondary" data-inc="${esc(inc.id)}" data-label="false_positive" ${isFP ? 'style="border-color:var(--ok); font-weight:700;"' : ''}>
+          <i class="ph-bold ph-check-circle"></i> False Positive (Mute)
+        </button>
+        <button id="btnFbConf" class="btn btn-primary" data-inc="${esc(inc.id)}" data-label="confirmed" ${isConf ? 'style="font-weight:700;"' : ''}>
+          <i class="ph-bold ph-siren"></i> Confirm Incident
+        </button>
+      </div>
+      ${fb?.note ? `<div class="xs dim mono" style="margin-top:6px;">Decision logged: “${esc(fb.note)}”</div>` : ''}
+    </div>
+  `;
+
+  // MITRE ATT&CK Kill Chain progression
+  const KILL_CHAIN = [
+    "Credential Access", "Initial Access", "Privilege Escalation", "Defense Evasion", "Exfiltration", "Impact"
+  ];
+  const stageCounts = Object.fromEntries(KILL_CHAIN.map(s => [s, 0]));
+  (inc.timeline || []).forEach(t => {
+    const tactic = (t.mitre_tactic || "").split(" (")[0].trim();
+    if (Object.hasOwn(stageCounts, tactic)) stageCounts[tactic]++;
+  });
+
+  let furthestIdx = -1;
+  KILL_CHAIN.forEach((s, idx) => { if (stageCounts[s] > 0) furthestIdx = idx; });
+
+  const kcBoxes = KILL_CHAIN.map((stage, idx) => {
+    const cnt = stageCounts[stage];
+    const reached = cnt > 0;
+    const isFurthest = (idx === furthestIdx);
+    const cls = ["killchain-step", reached ? "reached" : "dim", isFurthest ? "furthest" : ""].filter(Boolean).join(" ");
+    return `
+      <div class="${cls}">
+        <div class="killchain-title">${esc(stage)}</div>
+        <div class="flex items-center gap-4">
+          ${reached ? `<span class="killchain-badge">${cnt} alert${cnt===1?'':'s'}</span>` : '<span class="dim xs">—</span>'}
+          ${isFurthest ? '<span class="tag critical" style="font-size:8px; padding:0 3px;">FURTHEST</span>' : ''}
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  // Entity Graph SVG
+  const graphSvg = buildEntityGraphSvg(inc);
+
+  // Investigation Summary
+  let invSection = "";
+  if (inv) {
+    const vClass = inv.verdict === "true_positive" ? "critical" : inv.verdict === "false_positive" ? "ok" : "medium";
+    const confPct = Math.round((inv.confidence || 0) * 100);
+
+    const timelineItems = (inv.attack_timeline || []).map(t => `
+      <div style="position:relative; padding-left:14px; margin-bottom:8px; border-left:2px solid var(--border-strong);">
+        <div class="flex items-center gap-6">
+          <b style="font-size:11.5px; color:var(--text-primary);">${esc(t.time)}</b>
+          <span class="tag indigo" style="font-size:9.5px;">${esc(t.tactic)}</span>
+          ${t.technique_id ? `<span class="chip mono bolder" style="color:var(--primary);">${esc(t.technique_id)}</span>` : ''}
+        </div>
+        <div class="small dim" style="margin-top:2px;">${esc(t.description)}</div>
+      </div>
+    `).join("");
+
+    const evidenceItems = (inv.key_evidence || []).map(e => `
+      <div class="flex items-center gap-6 small" style="margin-bottom:4px;">
+        <code class="mono" style="color:var(--secondary);">${esc(e.event_id)}</code>
+        <span class="muted">${esc(e.why)}</span>
+      </div>
+    `).join("");
+
+    invSection = `
+      <div style="background:var(--bg-surface-elevated); border:1px solid var(--border-subtle); border-radius:8px; padding:12px 14px; margin:12px 0;">
+        <div class="flex items-center justify-between" style="margin-bottom:8px;">
+          <div class="flex items-center gap-8">
+            <span class="tag ${vClass}"><i class="ph-bold ph-shield-check"></i> VERDICT: ${esc(inv.verdict.toUpperCase())}</span>
+            <span class="bolder mono" style="font-size:12px; color:var(--primary);">Confidence: ${confPct}%</span>
+          </div>
+          <span class="small dim mono">Model: ${esc(inv.model || inv.source)} · ${inv.tool_calls || 0} Tools · ${inv.duration_s || 0}s</span>
+        </div>
+        <p style="margin:6px 0; font-size:12.5px; line-height:1.45; color:var(--text-primary);">${esc(inv.summary)}</p>
+        ${inv.fallback_reason ? `<div class="xs warn mono" style="margin-top:4px;">Resilience note: ${esc(inv.fallback_reason)}</div>` : ''}
+
+        ${timelineItems ? `
+          <div class="xs bolder dim" style="letter-spacing:0.04em; margin:14px 0 6px;">RECONSTRUCTED ATTACK TIMELINE</div>
+          <div style="margin-top:8px;">${timelineItems}</div>
+        ` : ''}
+
+        ${evidenceItems ? `
+          <div class="xs bolder dim" style="letter-spacing:0.04em; margin:14px 0 6px;">VERIFIED FORENSIC EVIDENCE (CHAIN OF CUSTODY)</div>
+          <div style="margin-top:8px;">${evidenceItems}</div>
+        ` : ''}
+      </div>
+    `;
+  } else {
+    invSection = `
+      <div class="empty-state" style="padding:20px; background:var(--bg-surface-elevated); border:1px solid var(--border-subtle); border-radius:8px; margin:12px 0;">
+        <i class="ph-bold ph-magnifying-glass"></i>
+        <div>${AppState.investigating.includes(inc.id) ? "Autonomous Analyst is actively triaging this incident..." : "No deep AI investigation generated yet."}</div>
+      </div>
+    `;
+  }
+
+  // Correlated Alert Timeline
+  const correlatedAlerts = (inc.timeline || []).map(t => {
+    const techChip = (t.technique_id || t.mitre_technique_id) ? `<span class="chip mono bolder" style="color:var(--primary);">${esc(t.technique_id || t.mitre_technique_id)}</span>` : '';
+    return `
+      <div style="position:relative; padding-left:14px; margin-bottom:8px; border-left:2px solid var(--border-subtle);">
+        <div class="flex items-center gap-6">
+          <span class="dim mono xs">${hms(t.ts)}</span>
+          <b style="color:var(--text-primary); font-size:12px;">${esc(t.type)}</b>
+          <span class="tag ${safeSev(t.severity)}" style="font-size:9.5px;">${esc(t.severity)}</span>
+          ${techChip}
+        </div>
+        <div class="small dim" style="margin-top:2px;">${esc(t.mitre_tactic)} — ${esc(t.detail)}</div>
+      </div>
+    `;
+  }).join("");
+
+  // Associated Containment Actions
+  const incActions = Object.values(AppState.actions).filter(a => a.incident_id === inc.id);
+  const actionsHtml = incActions.length ? incActions.map(renderActionCardHtml).join("") : '<div class="small dim">No response actions triggered for this incident yet.</div>';
+
+  box.innerHTML = `
+    <!-- Top Risk & Status Card -->
+    <div style="display:flex; align-items:center; gap:16px; background:var(--bg-surface-elevated); border:1px solid var(--border-subtle); border-radius:8px; padding:12px 16px;">
+      ${gaugeSvg}
+      <div style="flex:1;">
+        <div class="flex items-center gap-8">
+          <b style="font-size:16px; color:var(--text-primary);">${esc(inc.id)}</b>
+          <span class="tag ${safeSev(r.level)}" style="font-size:11px;">${esc(String(r.level).toUpperCase())} RISK ${r.final ? '(FINAL)' : '(PRELIMINARY)'}</span>
+        </div>
+        <div style="font-size:12.5px; color:var(--text-secondary); margin-top:3px;">${esc(r.justification)}</div>
+      </div>
+    </div>
+
+    ${breakdownTable}
+    ${feedbackBox}
+
+    <div class="xs bolder dim" style="letter-spacing:0.04em; margin:16px 0 6px;">MITRE ATT&amp;CK KILL CHAIN MATRIX</div>
+    <div class="killchain-grid">${kcBoxes}</div>
+
+    <div class="xs bolder dim" style="letter-spacing:0.04em; margin:16px 0 6px;">INTERACTIVE ENTITY RELATIONSHIP TOPOLOGY</div>
+    ${graphSvg}
+
+    <div class="xs bolder dim" style="letter-spacing:0.04em; margin:16px 0 6px;">AUTONOMOUS AI FORENSIC ANALYSIS</div>
+    ${invSection}
+
+    <div class="xs bolder dim" style="letter-spacing:0.04em; margin:16px 0 6px;">CORRELATED SECURITY ALERTS (${(inc.timeline || []).length})</div>
+    <div style="margin-top:8px;">${correlatedAlerts}</div>
+
+    <div class="xs bolder dim" style="letter-spacing:0.04em; margin:16px 0 6px;">ASSOCIATED CONTAINMENT ACTIONS (${incActions.length})</div>
+    <div style="margin-top:8px;">${actionsHtml}</div>
+  `;
+}
+
+// --------------------------------------------------------------------------
+// SVG ENTITY GRAPH
+// --------------------------------------------------------------------------
+function buildEntityGraphSvg(inc) {
+  if (!inc) return "";
+  const nodesMap = new Map();
+  const edges = new Set();
+  const attackIps = new Set();
+
+  (inc.timeline || []).forEach(t => {
+    const isAtk = ["brute_force", "password_spraying", "new_country_login", "impossible_travel"].includes(t.type);
+    if (isAtk) {
+      if (t.entity && t.entity.startsWith("ip:")) attackIps.add(t.entity.slice(3));
+      const ipMatches = (t.detail || "").match(/\b(?:\d{1,3}\.){3}\d{1,3}\b/g);
+      if (ipMatches) ipMatches.forEach(ip => attackIps.add(ip));
+    }
+  });
+
+  (inc.entities || []).forEach(e => {
+    if (e.startsWith("ip:")) {
+      const ip = e.slice(3);
+      if (attackIps.has(ip) || (inc.alert_types && (inc.alert_types.includes("brute_force") || inc.alert_types.includes("new_country_login")))) {
+        attackIps.add(ip);
+      }
+    }
+  });
+
+  (inc.entities || []).forEach(e => {
+    const colon = e.indexOf(":");
+    if (colon > 0) {
+      const type = e.slice(0, colon);
+      const val = e.slice(colon + 1);
+      nodesMap.set(e, { id: e, type: type, label: val, full: e, isAttacker: type === "ip" && attackIps.has(val) });
+    }
+  });
+
+  (inc.timeline || []).forEach(t => {
+    if (t.entity && t.entity.includes(":")) {
+      const colon = t.entity.indexOf(":");
+      const type = t.entity.slice(0, colon);
+      const val = t.entity.slice(colon + 1);
+      if (!nodesMap.has(t.entity)) {
+        nodesMap.set(t.entity, { id: t.entity, type: type, label: val, full: t.entity, isAttacker: type === "ip" && attackIps.has(val) });
+      }
+    }
+    const hostMatches = (t.detail || "").match(/\b(web-\d+|db-\d+|app-\d+|file-\d+|srv-\d+|s3:[a-zA-Z0-9_.-]+)\b/g);
+    if (hostMatches) {
+      hostMatches.forEach(h => {
+        const id = "host:" + h;
+        if (!nodesMap.has(id)) nodesMap.set(id, { id: id, type: "host", label: h, full: id, isAttacker: false });
+      });
+    }
+  });
+
+  if (nodesMap.size === 0) {
+    return '<div class="small dim" style="padding:10px 0;">No entity nodes linked to this incident.</div>';
+  }
+
+  const users = [...nodesMap.values()].filter(n => n.type === "user");
+  const ips = [...nodesMap.values()].filter(n => n.type === "ip");
+  const hosts = [...nodesMap.values()].filter(n => n.type === "host");
+
+  ips.forEach(ip => users.forEach(u => edges.add([ip.id, u.id].sort().join("--"))));
+  users.forEach(u => hosts.forEach(h => edges.add([u.id, h.id].sort().join("--"))));
+
+  const cols = [];
+  if (ips.length) cols.push({ type: "ip", nodes: ips });
+  if (users.length) cols.push({ type: "user", nodes: users });
+  if (hosts.length) cols.push({ type: "host", nodes: hosts });
+
+  const W = 520, H = 150;
+  const numCols = cols.length || 1;
+  cols.forEach((c, colIdx) => {
+    const cx = numCols === 1 ? W / 2 : 75 + colIdx * ((W - 150) / (numCols - 1));
+    const k = c.nodes.length;
+    c.nodes.forEach((n, idx) => {
+      n.x = Math.round(cx);
+      n.y = k === 1 ? Math.round(H / 2) : Math.round(30 + idx * ((H - 60) / (k - 1)));
+    });
+  });
+
+  let linesSvg = "";
+  edges.forEach(e => {
+    const [id1, id2] = e.split("--");
+    const n1 = nodesMap.get(id1);
+    const n2 = nodesMap.get(id2);
+    if (n1 && n2) {
+      linesSvg += `<line x1="${n1.x}" y1="${n1.y}" x2="${n2.x}" y2="${n2.y}" stroke="var(--border-strong)" stroke-width="1.5" stroke-dasharray="2 2"/>`;
+    }
+  });
+
+  let nodesSvg = "";
+  nodesMap.forEach(n => {
+    const strokeColor = n.isAttacker ? "var(--crit)" : n.type === "user" ? "var(--primary)" : "var(--secondary)";
+    const fillColor = "var(--bg-surface-elevated)";
+    const letter = n.type === "user" ? "U" : n.type === "ip" ? "IP" : "H";
+    const truncLabel = n.label.length > 10 ? n.label.slice(0, 9) + "…" : n.label;
+
+    nodesSvg += `
+      <g style="cursor:pointer;">
+        <title>${esc(n.full)} (${esc(n.type)}${n.isAttacker ? ", ATTACK SOURCE" : ""})</title>
+        <circle cx="${n.x}" cy="${n.y}" r="15" fill="${fillColor}" stroke="${strokeColor}" stroke-width="2"/>
+        <text x="${n.x}" y="${n.y + 4}" text-anchor="middle" font-size="10" font-weight="800" fill="${strokeColor}">${esc(letter)}</text>
+        <text x="${n.x}" y="${n.y + 24}" text-anchor="middle" font-size="10" font-family="'JetBrains Mono',monospace" fill="var(--text-primary)">${esc(truncLabel)}</text>
+      </g>
+    `;
+  });
+
+  return `
+    <div style="background:var(--bg-surface-elevated); border:1px solid var(--border-subtle); border-radius:8px; padding:10px; margin:8px 0 14px;">
+      <svg viewBox="0 0 ${W} ${H}" width="100%" height="${H}" style="display:block;">
+        <text x="12" y="16" font-size="9.5" fill="var(--text-muted)">LEGEND: <tspan fill="var(--crit)">● Attack IP</tspan> · <tspan fill="var(--primary)">● Targeted User</tspan> · <tspan fill="var(--secondary)">● Compromised Host</tspan></text>
+        ${linesSvg}
+        ${nodesSvg}
+      </svg>
+    </div>
+  `;
+}
+
+// --------------------------------------------------------------------------
+// RESPONSE ACTIONS & PIPELINE TRACKER
+// --------------------------------------------------------------------------
+function renderPipelineTrackerHtml(a) {
+  const st = a.status;
+  const isRejected = st === "rejected";
+
+  // Step 1: Dispatched
+  const s1Time = a.created_ts ? hms(a.created_ts) : "-";
+
+  // Step 2: Approval / Queue
+  let s2Cls = "pipe-node is-waiting", s2Sub = "-";
+  if (st === "pending_approval") {
+    s2Cls = "pipe-node is-pending"; s2Sub = "Awaiting Approval";
+  } else if (isRejected) {
+    s2Cls = "pipe-node is-failed"; s2Sub = "Rejected";
+  } else if (st === "queued") {
+    s2Cls = "pipe-node is-active"; s2Sub = a.decided_ts ? hms(a.decided_ts) : "Queued";
+  } else {
+    s2Cls = "pipe-node is-done"; s2Sub = a.decided_ts ? hms(a.decided_ts) : "Approved";
+  }
+
+  // Step 3: Execution
+  let s3Cls = "pipe-node is-waiting", s3Sub = "-";
+  const rawExec = a.executor ? String(a.executor).toLowerCase() : "";
+  const execBadge = rawExec === "uipath" ? `<span class="chip xs mono" style="color:var(--secondary);">UiPath</span>` : `<span class="chip xs mono">Builtin</span>`;
+
+  if (st === "executing") {
+    s3Cls = "pipe-node is-active"; s3Sub = "In Progress";
+  } else if (["executed", "verified", "verification_failed"].includes(st)) {
+    s3Cls = "pipe-node is-done"; s3Sub = a.finish_time ? hms(a.finish_time) : "Executed";
+  } else if (st === "failed") {
+    s3Cls = "pipe-node is-failed"; s3Sub = "Execution Failed";
+  }
+
+  // Step 4: Verification
+  let s4Cls = "pipe-node is-waiting", s4Sub = "-";
+  const vSt = a.verification_status || (st === "verified" ? "verified" : (st === "verification_failed" ? "failed" : null));
+  if (vSt === "verified" || st === "verified") {
+    s4Cls = "pipe-node is-done"; s4Sub = "State Verified ✓";
+  } else if (vSt === "failed" || st === "verification_failed") {
+    s4Cls = "pipe-node is-failed"; s4Sub = "Check Failed ✗";
+  } else if (st === "executed" || vSt === "pending" || st === "executing") {
+    s4Cls = "pipe-node is-pending"; s4Sub = "Verifying State...";
+  }
+
+  return `
+    <div class="pipe-tracker">
+      <div class="pipe-node is-done">
+        <div class="pipe-lbl"><span>PROPOSAL</span></div>
+        <div class="pipe-detail">${esc(s1Time)}</div>
+      </div>
+      <span class="pipe-arrow">&rarr;</span>
+      <div class="${s2Cls}">
+        <div class="pipe-lbl"><span>DISPATCH</span></div>
+        <div class="pipe-detail">${esc(s2Sub)}</div>
+      </div>
+      <span class="pipe-arrow">&rarr;</span>
+      <div class="${s3Cls}">
+        <div class="pipe-lbl"><span>EXECUTION</span> ${execBadge}</div>
+        <div class="pipe-detail">${esc(s3Sub)}</div>
+      </div>
+      <span class="pipe-arrow">&rarr;</span>
+      <div class="${s4Cls}">
+        <div class="pipe-lbl"><span>VERIFICATION</span></div>
+        <div class="pipe-detail">${esc(s4Sub)}</div>
+      </div>
+    </div>
+  `;
+}
+
+function renderActionCardHtml(a) {
+  const isPending = a.status === "pending_approval";
+  const isFailed = (a.status === "verification_failed" || a.verification_status === "failed");
+  const isAuto = a.mode === "auto" || a.decided_by === "auto";
+
+  let buttons = "";
+  if (isPending) {
+    const isConfirming = AppState.confirmingActionId === a.id;
+    const needsConfirm = (a.type === "isolate_host" || a.type === "disable_user");
+
+    if (isConfirming) {
+      buttons = `
+        <div class="flex items-center gap-6">
+          <span style="color:var(--crit); font-weight:700; font-size:11px;">Confirm High-Impact Isolation?</span>
+          <button class="btn btn-danger xs" data-action="approve" data-id="${esc(a.id)}" data-confirmed="1"><i class="ph-bold ph-check"></i> Yes, Approve</button>
+          <button class="btn xs" data-action="cancel-confirm" data-id="${esc(a.id)}">Cancel</button>
+        </div>
+      `;
+    } else {
+      buttons = `
+        <div class="flex items-center gap-6">
+          <button class="btn btn-success xs" data-action="approve" data-id="${esc(a.id)}" ${needsConfirm ? 'data-needs-confirm="1"' : ''}><i class="ph-bold ph-check"></i> Approve</button>
+          <button class="btn btn-danger xs" data-action="reject" data-id="${esc(a.id)}"><i class="ph-bold ph-x"></i> Reject</button>
+        </div>
+      `;
+    }
+  } else {
+    buttons = `<span class="tag ${a.status === 'verified' ? 'ok' : a.status === 'failed' ? 'critical' : 'indigo'}">${esc(STATUS_LABELS[a.status] || a.status)}</span>`;
+  }
+
+  const retryButton = isFailed ? `
+    <div style="margin-top:6px; padding:8px 10px; background:var(--crit-subtle); border:1px solid var(--crit-border); border-radius:6px; display:flex; align-items:center; justify-content:space-between; gap:8px;">
+      <div>
+        <div style="color:var(--crit); font-weight:700; font-size:11.5px;"><i class="ph-bold ph-warning-circle"></i> Verification Check Failed</div>
+        <div class="small dim">${esc(a.verification_detail || "Simulated state check failed")}</div>
+        ${a.recommended_next_step ? `<div class="xs bolder" style="color:var(--text-primary); margin-top:2px;">Next Step: ${esc(a.recommended_next_step)}</div>` : ''}
+      </div>
+      <button class="btn btn-danger xs" data-action="retry" data-id="${esc(a.id)}"><i class="ph-bold ph-arrows-clockwise"></i> Retry Action</button>
+    </div>
+  ` : '';
+
+  return `
+    <div class="action-item-card ${isPending ? 'pending-approval' : ''} ${isFailed ? 'has-failed' : ''}">
+      <div class="flex items-center justify-between gap-8">
+        <div class="flex items-center gap-8">
+          <b style="font-size:13px; color:var(--text-primary);">${esc(a.type.replace('_', ' ').toUpperCase())}</b>
+          <code class="mono" style="font-size:11.5px;">${esc(a.target)}</code>
+          <span class="chip mono xs">${esc(a.incident_id || '')}</span>
+          <span class="tag ${isAuto ? 'indigo' : 'med'}" style="font-size:9.5px;">${isAuto ? 'AUTO EXECUTE' : 'REQUIRES APPROVAL'}</span>
+        </div>
+        <div>${buttons}</div>
+      </div>
+      <div class="small dim">${esc(a.reason || 'Automated incident containment playbook')}</div>
+      ${renderPipelineTrackerHtml(a)}
+      ${retryButton}
+    </div>
+  `;
+}
+
+function renderResponseCenter() {
+  const all = Object.values(AppState.actions);
+  const filter = (document.getElementById("actionsSearchInput")?.value || "").toLowerCase().trim();
+
+  const isApproval = a => (a.mode === "approval" || a.status === "pending_approval" || a.type === "isolate_host" || a.type === "disable_user");
+  let approvalList = all.filter(isApproval);
+  let autoList = all.filter(a => !isApproval(a));
+
+  if (filter) {
+    const matcher = a => [a.id, a.type, a.target, a.incident_id, a.status].join(" ").toLowerCase().includes(filter);
+    approvalList = approvalList.filter(matcher);
+    autoList = autoList.filter(matcher);
+  }
+
+  // Sort: pending approvals first, then newest
+  approvalList.sort((a, b) => {
+    const aP = a.status === "pending_approval" ? 1 : 0;
+    const bP = b.status === "pending_approval" ? 1 : 0;
+    return (bP - aP) || ((b.created_ts || 0) - (a.created_ts || 0));
+  });
+  autoList.sort((a, b) => (b.created_ts || 0) - (a.created_ts || 0));
+
+  const pendCount = approvalList.filter(a => a.status === "pending_approval").length;
+  document.getElementById("badgeActionsApproval").textContent = pendCount ? `${pendCount} Pending / ${approvalList.length}` : approvalList.length;
+  document.getElementById("badgeActionsAuto").textContent = autoList.length;
+
+  const appBox = document.getElementById("actionsApprovalGroup");
+  const autoBox = document.getElementById("actionsAutoGroup");
+
+  if (appBox) appBox.innerHTML = approvalList.length ? approvalList.map(renderActionCardHtml).join("") : '<div class="empty-state"><i class="ph-bold ph-check-circle"></i><div>No pending human approvals</div></div>';
+  if (autoBox) autoBox.innerHTML = autoList.length ? autoList.map(renderActionCardHtml).join("") : '<div class="empty-state"><i class="ph-bold ph-robot"></i><div>No autonomous actions yet</div></div>';
+}
+
+document.getElementById("actionsSearchInput")?.addEventListener("input", renderResponseCenter);
+
+// Response Action Button Handlers (Approve / Reject / Retry)
+document.body.addEventListener("click", async ev => {
+  const btn = ev.target.closest("button[data-action]");
+  if (!btn) return;
+
+  const act = btn.dataset.action;
+  const id = btn.dataset.id;
+
+  if (act === "cancel-confirm") {
+    AppState.confirmingActionId = null;
+    renderResponseCenter();
+    renderIncidentDossier();
+    return;
+  }
+
+  if (btn.dataset.needsConfirm && !btn.dataset.confirmed) {
+    AppState.confirmingActionId = id;
+    renderResponseCenter();
+    renderIncidentDossier();
+    return;
+  }
+
+  AppState.confirmingActionId = null;
+  btn.disabled = true;
+
+  try {
+    const res = await fetch(`/actions/${encodeURIComponent(id)}/${act}`, { method: "POST" });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.detail || res.statusText);
+    }
+    const updated = await res.json();
+    AppState.actions[id] = updated;
+    showToast(`Action ${act.toUpperCase()} succeeded for ${updated.type}`, "ok");
+    renderKPIs();
+    renderResponseCenter();
+    renderIncidentDossier();
+  } catch (e) {
+    showToast(`Action failed: ${e.message}`, "critical");
+    btn.disabled = false;
+  }
+});
+
+// Analyst feedback button click
+document.body.addEventListener("click", async ev => {
+  const btn = ev.target.closest("button[data-label]");
+  if (!btn) return;
+
+  const incId = btn.dataset.inc;
+  const label = btn.dataset.label;
+  const note = (document.getElementById("inputFbNote")?.value || "").trim();
+
+  btn.disabled = true;
+  try {
+    const res = await fetch(`/incidents/${encodeURIComponent(incId)}/feedback`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ label, note })
+    });
+    if (!res.ok) throw new Error((await res.json()).detail || "Feedback update failed");
+
+    const updated = await res.json();
+    AppState.incidents[incId] = updated;
+    showToast(`Incident marked ${label === 'false_positive' ? 'False Positive (Muted)' : 'Confirmed True Positive'}`, label === 'false_positive' ? 'ok' : 'critical');
+    renderAll();
+  } catch (e) {
+    showToast("Feedback error: " + e.message, "critical");
+    btn.disabled = false;
+  }
+});
+
+// --------------------------------------------------------------------------
+// DEDICATED CONTAINMENT ACTION CONSOLE
+// --------------------------------------------------------------------------
+function updateContainmentPresets() {
+  const ips = new Set();
+  const users = new Set();
+  const hosts = new Set();
+
+  Object.values(AppState.incidents).forEach(i => {
+    (i.entities || []).forEach(e => {
+      if (e.startsWith("ip:")) ips.add(e.slice(3));
+      if (e.startsWith("user:")) users.add(e.slice(5));
+      if (e.startsWith("host:")) hosts.add(e.slice(5));
+    });
+  });
+
+  const pBlock = document.getElementById("presetsBlockIp");
+  const pRev = document.getElementById("presetsRevokeSession");
+  const pDis = document.getElementById("presetsDisableUser");
+  const pIso = document.getElementById("presetsIsolateHost");
+
+  if (pBlock && ips.size) {
+    pBlock.innerHTML = 'Recent Targets: ' + [...ips].slice(0, 4).map(ip =>
+      `<button type="button" class="preset-btn" onclick="document.getElementById('inputBlockIp').value='${esc(ip)}'">${esc(ip)}</button>`
+    ).join("");
+  }
+  if (pRev && users.size) {
+    pRev.innerHTML = 'Active Users: ' + [...users].slice(0, 4).map(u =>
+      `<button type="button" class="preset-btn" onclick="document.getElementById('inputRevokeUser').value='${esc(u)}'">${esc(u)}</button>`
+    ).join("");
+  }
+  if (pDis && users.size) {
+    pDis.innerHTML = 'Targets: ' + [...users].slice(0, 4).map(u =>
+      `<button type="button" class="preset-btn" onclick="document.getElementById('inputDisableUser').value='${esc(u)}'">${esc(u)}</button>`
+    ).join("");
+  }
+  if (pIso && hosts.size) {
+    pIso.innerHTML = 'Active Hosts: ' + [...hosts].slice(0, 4).map(h =>
+      `<button type="button" class="preset-btn" onclick="document.getElementById('inputIsolateHost').value='${esc(h)}'">${esc(h)}</button>`
+    ).join("");
+  }
+}
+
+async function executeConsoleAction(endpoint, payload, desc) {
+  const notif = document.getElementById("consoleNotification");
+  try {
+    const res = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || "Action execution failed");
+
+    if (notif) {
+      notif.className = "status-pill ok";
+      notif.style.display = "block";
+      notif.textContent = data.message || `${desc} succeeded.`;
+    }
+    showToast(data.message || `${desc} executed successfully`, "ok");
+
+    // Add to console history
+    AppState.consoleHistory.unshift({
+      time: new Date(),
+      action: desc,
+      target: Object.values(payload)[0],
+      status: "Success"
+    });
+    renderConsoleHistory();
+  } catch (err) {
+    if (notif) {
+      notif.className = "status-pill crit";
+      notif.style.display = "block";
+      notif.textContent = "Error: " + err.message;
+    }
+    showToast("Containment Error: " + err.message, "critical");
+  }
+}
+
+function renderConsoleHistory() {
+  const box = document.getElementById("consoleHistoryBox");
+  if (!box) return;
+  if (!AppState.consoleHistory.length) {
+    box.innerHTML = '<div class="empty-state" style="padding:20px;"><div class="small dim">No manual console operations executed yet.</div></div>';
+    return;
+  }
+
+  box.innerHTML = `
+    <table style="width:100%; border-collapse:collapse; font-size:12px;">
+      <thead>
+        <tr style="color:var(--text-muted); text-align:left; border-bottom:1px solid var(--border-subtle); font-size:10.5px;">
+          <th style="padding:8px 14px;">TIME</th>
+          <th style="padding:8px 14px;">ACTION</th>
+          <th style="padding:8px 14px;">TARGET</th>
+          <th style="padding:8px 14px;">STATUS</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${AppState.consoleHistory.slice(0, 8).map(h => `
+          <tr style="border-bottom:1px solid var(--border-subtle);">
+            <td style="padding:8px 14px; color:var(--text-muted);" class="mono">${h.time.toLocaleTimeString()}</td>
+            <td style="padding:8px 14px; font-weight:600; color:var(--text-primary);">${esc(h.action)}</td>
+            <td style="padding:8px 14px; font-family:'JetBrains Mono',monospace;">${esc(h.target)}</td>
+            <td style="padding:8px 14px;"><span class="tag ok"><i class="ph-bold ph-check"></i> ${esc(h.status)}</span></td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+  `;
+}
+renderConsoleHistory();
+
+// Console Action Form Submissions
+document.getElementById("formConsoleBlockIp")?.addEventListener("submit", e => {
+  e.preventDefault();
+  const val = document.getElementById("inputBlockIp").value.trim();
+  if (val) executeConsoleAction("/console/block-ip", { ip: val }, "Perimeter Firewall Block IP");
+});
+document.getElementById("formConsoleRevoke")?.addEventListener("submit", e => {
+  e.preventDefault();
+  const val = document.getElementById("inputRevokeUser").value.trim();
+  if (val) executeConsoleAction("/console/revoke-session", { user: val }, "Revoke Active Sessions");
+});
+document.getElementById("formConsoleDisable")?.addEventListener("submit", e => {
+  e.preventDefault();
+  const val = document.getElementById("inputDisableUser").value.trim();
+  if (val) executeConsoleAction("/console/disable-user", { user: val }, "Suspend IAM User Account");
+});
+document.getElementById("formConsoleIsolate")?.addEventListener("submit", e => {
+  e.preventDefault();
+  const val = document.getElementById("inputIsolateHost").value.trim();
+  if (val) executeConsoleAction("/console/isolate-host", { host: val }, "EDR Endpoint Host Isolation");
+});
+document.getElementById("formConsoleTicket")?.addEventListener("submit", e => {
+  e.preventDefault();
+  const val = document.getElementById("inputTicketTitle").value.trim();
+  if (val) executeConsoleAction("/console/create-ticket", { title: val }, "Create ITSM Ticket");
+});
+document.getElementById("formConsoleNotify")?.addEventListener("submit", e => {
+  e.preventDefault();
+  const val = document.getElementById("inputNotifyMessage").value.trim();
+  if (val) executeConsoleAction("/console/send-notification", { message: val }, "Broadcast SOC Notification");
+});
+
+// --------------------------------------------------------------------------
+// COMPLIANCE & CRYPTOGRAPHIC AUDIT VAULT
+// --------------------------------------------------------------------------
+async function loadAudit() {
+  try {
+    const [rows, verify] = await Promise.all([
+      fetch("/audit?limit=200").then(r => r.json()),
+      fetch("/audit/verify").then(r => r.json()).catch(() => null)
+    ]);
+
+    const pill = document.getElementById("auditIntegrityPill");
+    if (pill && verify) {
+      if (verify.valid) {
+        pill.className = "status-pill ok";
+        pill.innerHTML = `<i class="ph-bold ph-shield-check"></i> Integrity: Verified (${verify.entries} SHA-256 blocks)`;
+      } else {
+        pill.className = "status-pill crit";
+        pill.innerHTML = `<i class="ph-bold ph-warning-octagon"></i> Integrity: Broken at entry #${verify.first_broken_id}`;
+      }
+    }
+
+    AppState.auditRows = rows;
+    updateAuditFilterOptions(rows);
+    renderAuditRows();
+  } catch (err) {
+    document.getElementById("auditTableBody").innerHTML = '<div class="empty-state"><i class="ph-bold ph-x-circle"></i><div>Could not load audit log</div></div>';
+  }
+}
+
+document.getElementById("btnVerifyAudit")?.addEventListener("click", () => {
+  showToast("Re-verifying tamper-evident cryptographic hash chain...", "info");
+  loadAudit();
+});
+
+function updateAuditFilterOptions(rows) {
+  const incSel = document.getElementById("auditFilterInc");
+  const actSel = document.getElementById("auditFilterAct");
+  if (!incSel || !actSel) return;
+
+  const currentInc = incSel.value;
+  const currentAct = actSel.value;
+
+  const incs = new Set();
+  const acts = new Set();
+  rows.forEach(r => {
+    if (r.incident_id) incs.add(r.incident_id);
+    const a = r.action || r.event;
+    if (a) acts.add(a);
+  });
+
+  incSel.innerHTML = '<option value="">All Incidents</option>' + [...incs].sort().map(i =>
+    `<option value="${esc(i)}"${i === currentInc ? ' selected' : ''}>${esc(i)}</option>`
+  ).join("");
+
+  actSel.innerHTML = '<option value="">All Actions</option>' + [...acts].sort().map(a =>
+    `<option value="${esc(a)}"${a === currentAct ? ' selected' : ''}>${esc(a)}</option>`
+  ).join("");
+}
+
+function renderAuditRows() {
+  const container = document.getElementById("auditTableBody");
+  if (!container) return;
+  const selInc = document.getElementById("auditFilterInc")?.value || "";
+  const selAct = document.getElementById("auditFilterAct")?.value || "";
+
+  const filtered = (AppState.auditRows || []).filter(r => {
+    if (selInc && r.incident_id !== selInc) return false;
+    const a = r.action || r.event || "";
+    if (selAct && a !== selAct) return false;
+    return true;
+  });
+
+  if (!filtered.length) {
+    container.innerHTML = '<div class="empty-state"><i class="ph-bold ph-folder-notch-open"></i><div>No matching audit records</div></div>';
+    return;
+  }
+
+  container.innerHTML = filtered.map(r => {
+    const hashPreview = r.hash ? `SHA-256: ${r.hash.slice(0, 16)}…` : 'Genesis / Unhashed';
+    return `
+      <div class="audit-row" title="${esc(hashPreview)}">
+        <span class="mono dim xs">${hms(r.ts)}</span>
+        <span class="tag indigo xs" style="max-width:90px; text-align:center;">${esc(r.actor)}</span>
+        <b style="color:var(--text-primary); font-size:11.5px;">${esc(r.action || r.event)}</b>
+        <span class="mono dim xs">${esc(r.incident_id || '—')}</span>
+        <span class="dim" style="font-size:11.5px;">${esc(r.detail)} <span class="mono xs" style="color:var(--secondary); opacity:0.75;">(${esc(hashPreview)})</span></span>
+      </div>
+    `;
+  }).join("");
+}
+
+document.getElementById("auditFilterInc")?.addEventListener("change", renderAuditRows);
+document.getElementById("auditFilterAct")?.addEventListener("change", renderAuditRows);
+
+// --------------------------------------------------------------------------
+// THREAT SIMULATION & CLOUDTRAIL INGESTION
+// --------------------------------------------------------------------------
+async function launchSimulation(url, label) {
+  showToast(`Initiating ${label} scenario...`, "info");
+  try {
+    const res = await fetch(url, { method: "POST" });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || res.statusText);
+
+    const extra = data.attacker_ip ? ` | Hostile IP: ${data.attacker_ip}` : '';
+    const victim = data.victim ? ` | Target: ${data.victim}` : '';
+    showToast(`Simulation started: ${label}${extra}${victim}`, "ok");
+  } catch (e) {
+    showToast(`Could not launch ${label}: ${e.message}`, "critical");
+  }
+}
+
+document.getElementById("btnAttack")?.addEventListener("click", () => {
+  launchSimulation("/simulate/attack", "Full Cyber Intrusion");
+});
+document.getElementById("btnLaunchTargetedAttack")?.addEventListener("click", () => {
+  const user = document.getElementById("simTargetUser").value;
+  launchSimulation(`/simulate/attack?user=${encodeURIComponent(user)}`, `Multi-Stage Intrusion on ${user}`);
+});
+
+document.querySelectorAll(".sim-trigger").forEach(b => {
+  b.addEventListener("click", () => {
+    const url = b.dataset.sim;
+    const label = url.includes("spray") ? "Password Spraying" : "CloudTrail Replay";
+    launchSimulation(url, label);
+  });
+});
+
+// External CloudTrail Ingestion
+document.getElementById("btnIngestCloudtrail")?.addEventListener("click", async () => {
+  const txt = document.getElementById("txtCloudtrailJson").value.trim();
+  const rebase = document.getElementById("chkRebaseCloudtrail").checked;
+  const fb = document.getElementById("ingestFeedback");
+
+  if (!txt) {
+    showToast("Please paste valid CloudTrail JSON records first", "medium");
+    return;
+  }
+
+  let parsed = null;
+  try {
+    parsed = JSON.parse(txt);
+  } catch (err) {
+    showToast("Invalid JSON syntax in CloudTrail input", "critical");
+    return;
+  }
+
+  try {
+    const res = await fetch(`/ingest/cloudtrail?rebase=${rebase ? 'true' : 'false'}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(parsed)
+    });
+    const result = await res.json();
+    if (!res.ok) throw new Error(result.detail || "Ingestion failed");
+
+    if (fb) {
+      fb.className = "status-pill ok";
+      fb.style.display = "block";
+      fb.textContent = `Success: Ingested ${result.ingested} records (${result.duplicates_skipped} duplicates skipped).`;
+    }
+    showToast(`CloudTrail Ingestion: ${result.ingested} records processed`, "ok");
+  } catch (e) {
+    if (fb) {
+      fb.className = "status-pill crit";
+      fb.style.display = "block";
+      fb.textContent = "Error: " + e.message;
+    }
+    showToast("CloudTrail Ingestion Error: " + e.message, "critical");
+  }
+});
+
+// --------------------------------------------------------------------------
+// PRESENTATION MODE
+// --------------------------------------------------------------------------
+function togglePresentationMode(enable) {
+  document.body.classList.toggle("presentation-mode", enable);
+  sessionStorage.setItem("sentinel_presentation", enable ? "1" : "0");
+}
+document.getElementById("presToggleBtn")?.addEventListener("click", () => {
+  const isPres = document.body.classList.contains("presentation-mode");
+  togglePresentationMode(!isPres);
+});
+if (sessionStorage.getItem("sentinel_presentation") === "1") {
+  togglePresentationMode(true);
+}
+
+// --------------------------------------------------------------------------
+// GLOBAL RE-RENDER DISPATCHER
+// --------------------------------------------------------------------------
+function renderAll() {
+  renderKPIs();
+  renderOverviewCharts();
+  renderIncidentsList();
+  renderIncidentDossier();
+  renderResponseCenter();
+  updateContainmentPresets();
+}
+
+// Start WebSocket on Load
+initWebSocket();
+if (location.hash) handleHashRouting();
+</script>
+</body>
+</html>

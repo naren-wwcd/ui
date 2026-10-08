@@ -1,0 +1,86 @@
+{
+  "web-01": {
+    "role": "public web server",
+    "criticality": "medium",
+    "owner": "platform-team",
+    "data_classification": "internal",
+    "os": "Ubuntu 22.04"
+  },
+  "web-02": {
+    "role": "public web server",
+    "criticality": "medium",
+    "owner": "platform-team",
+    "data_classification": "internal",
+    "os": "Ubuntu 22.04"
+  },
+  "app-01": {
+    "role": "internal application",
+    "criticality": "high",
+    "owner": "apps-team",
+    "data_classification": "confidential",
+    "os": "Ubuntu 22.04"
+  },
+  "app-02": {
+    "role": "internal application",
+    "criticality": "medium",
+    "owner": "apps-team",
+    "data_classification": "internal",
+    "os": "RHEL 9"
+  },
+  "db-01": {
+    "role": "production database",
+    "criticality": "critical",
+    "owner": "data-team",
+    "data_classification": "restricted",
+    "os": "Ubuntu 22.04"
+  },
+  "file-01": {
+    "role": "company file server",
+    "criticality": "critical",
+    "owner": "it-ops",
+    "data_classification": "restricted",
+    "os": "Windows Server 2022"
+  },
+  "s3:company-data": {
+    "role": "S3 bucket with customer exports and backups",
+    "criticality": "critical",
+    "owner": "data-team",
+    "data_classification": "restricted",
+    "os": "AWS S3"
+  },
+  "s3": {
+    "role": "S3 bucket (not individually inventoried)",
+    "criticality": "medium",
+    "owner": "cloud-team",
+    "data_classification": "internal",
+    "os": "AWS S3"
+  },
+  "iam": {
+    "role": "AWS IAM (identity and access management)",
+    "criticality": "critical",
+    "owner": "security-team",
+    "data_classification": "restricted",
+    "os": "AWS IAM"
+  },
+  "cloudtrail": {
+    "role": "AWS CloudTrail audit logging",
+    "criticality": "critical",
+    "owner": "security-team",
+    "data_classification": "restricted",
+    "os": "AWS CloudTrail"
+  },
+  "aws-console": {
+    "role": "AWS management console sign-in",
+    "criticality": "high",
+    "owner": "cloud-team",
+    "data_classification": "internal",
+    "os": "AWS"
+  },
+  "sts": {
+    "role": "AWS STS (credential service)",
+    "criticality": "high",
+    "owner": "cloud-team",
+    "data_classification": "internal",
+    "os": "AWS"
+  }
+}

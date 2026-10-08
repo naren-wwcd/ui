@@ -1,0 +1,13 @@
+{
+  "_note": "Cached sample investigation, used when the Anthropic API fails or no key is set. {placeholders} are filled from the real incident; the evidence/timeline are built from the incident's own alerts so cited event IDs are always real.",
+  "verdict": "true_positive",
+  "confidence": 0.9,
+  "summary": "Cached sample analysis: {n_alerts} correlated alerts ({types}) involve user {user} and source IP {ip}. Taken together these alert types are consistent with a compromised account being used by an attacker.",
+  "recommended_actions": [
+    {"action": "block_ip",        "target": "{ip}",          "reason": "Source IP is the origin of the suspicious activity"},
+    {"action": "revoke_sessions", "target": "{user}",        "reason": "Active sessions may belong to the attacker"},
+    {"action": "disable_user",    "target": "{user}",        "reason": "Account is likely compromised; disable until the owner is verified"},
+    {"action": "isolate_host",    "target": "{host}",        "reason": "Host of the most severe alert in this incident"},
+    {"action": "open_ticket",     "target": "{incident_id}", "reason": "Track the investigation and notify the account owner"}
+  ]
+}

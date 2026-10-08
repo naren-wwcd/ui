@@ -1,0 +1,840 @@
+[
+  {
+    "eventVersion": "1.08",
+    "userIdentity": {
+      "type": "IAMUser",
+      "principalId": "AIDAEVEEXAMPLE",
+      "arn": "arn:aws:iam::123456789012:user/eve",
+      "accountId": "123456789012",
+      "userName": "eve"
+    },
+    "eventTime": "2026-10-07T09:30:00Z",
+    "eventSource": "signin.amazonaws.com",
+    "eventName": "ConsoleLogin",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "49.204.18.33",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/118.0",
+    "requestParameters": null,
+    "responseElements": {
+      "ConsoleLogin": "Success"
+    },
+    "requestID": "b7d39761-135b-5423-acd1-59eb0348174f",
+    "eventID": "8f3bccb7-8d64-5b25-908b-0638e13f394c",
+    "readOnly": false,
+    "eventType": "AwsApiCall",
+    "managementEvent": true,
+    "recipientAccountId": "123456789012",
+    "additionalEventData": {
+      "LoginTo": "https://console.aws.amazon.com/console/home?state=hashArgs",
+      "MobileVersion": "No",
+      "MFAUsed": "Yes"
+    }
+  },
+  {
+    "eventVersion": "1.08",
+    "userIdentity": {
+      "type": "IAMUser",
+      "principalId": "AIDAEVEEXAMPLE",
+      "arn": "arn:aws:iam::123456789012:user/eve",
+      "accountId": "123456789012",
+      "userName": "eve",
+      "accessKeyId": "AKIAIOSFODNN7EVE001"
+    },
+    "eventTime": "2026-10-07T09:30:01Z",
+    "eventSource": "s3.amazonaws.com",
+    "eventName": "GetObject",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "49.204.18.33",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/118.0",
+    "requestParameters": {
+      "bucketName": "company-data",
+      "Host": "company-data.s3.us-east-1.amazonaws.com",
+      "key": "reports/q3-summary.pdf"
+    },
+    "responseElements": null,
+    "requestID": "d90f55eb-b1c8-514d-a9cd-cb9cf00a366d",
+    "eventID": "abd64f17-28d9-58d7-b3a6-ae33d15cdbc3",
+    "readOnly": true,
+    "eventType": "AwsApiCall",
+    "managementEvent": false,
+    "recipientAccountId": "123456789012",
+    "eventCategory": "Data",
+    "additionalEventData": {
+      "SignatureVersion": "SigV4",
+      "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+      "bytesTransferredIn": 0,
+      "bytesTransferredOut": 184322,
+      "AuthenticationMethod": "AuthHeader"
+    }
+  },
+  {
+    "eventVersion": "1.08",
+    "userIdentity": {
+      "type": "IAMUser",
+      "principalId": "AIDABOBEXAMPLE",
+      "arn": "arn:aws:iam::123456789012:user/bob",
+      "accountId": "123456789012",
+      "userName": "bob"
+    },
+    "eventTime": "2026-10-07T09:30:03Z",
+    "eventSource": "signin.amazonaws.com",
+    "eventName": "ConsoleLogin",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "98.45.101.7",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/118.0",
+    "requestParameters": null,
+    "responseElements": {
+      "ConsoleLogin": "Success"
+    },
+    "requestID": "873d409f-3f9a-559f-abd4-56623533a498",
+    "eventID": "59ec482d-81f0-53cf-b05d-d264cb32eee0",
+    "readOnly": false,
+    "eventType": "AwsApiCall",
+    "managementEvent": true,
+    "recipientAccountId": "123456789012",
+    "additionalEventData": {
+      "LoginTo": "https://console.aws.amazon.com/console/home?state=hashArgs",
+      "MobileVersion": "No",
+      "MFAUsed": "Yes"
+    }
+  },
+  {
+    "eventVersion": "1.08",
+    "userIdentity": {
+      "type": "IAMUser",
+      "principalId": "AIDABOBEXAMPLE",
+      "arn": "arn:aws:iam::123456789012:user/bob",
+      "accountId": "123456789012",
+      "userName": "bob",
+      "accessKeyId": "AKIAIOSFODNN7BOB002"
+    },
+    "eventTime": "2026-10-07T09:30:04Z",
+    "eventSource": "ec2.amazonaws.com",
+    "eventName": "DescribeInstances",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "98.45.101.7",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/118.0",
+    "requestParameters": {
+      "instancesSet": {}
+    },
+    "responseElements": null,
+    "requestID": "ee8bae9b-c426-5099-bc7f-c169659cc27f",
+    "eventID": "e9e8879e-cb62-5226-91af-6a3c6f09b2a7",
+    "readOnly": true,
+    "eventType": "AwsApiCall",
+    "managementEvent": true,
+    "recipientAccountId": "123456789012"
+  },
+  {
+    "eventVersion": "1.08",
+    "userIdentity": {
+      "type": "IAMUser",
+      "principalId": "AIDABOBEXAMPLE",
+      "arn": "arn:aws:iam::123456789012:user/bob",
+      "accountId": "123456789012",
+      "userName": "bob",
+      "accessKeyId": "AKIAIOSFODNN7BOB002"
+    },
+    "eventTime": "2026-10-07T09:30:06Z",
+    "eventSource": "s3.amazonaws.com",
+    "eventName": "GetObject",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "98.45.101.7",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/118.0",
+    "requestParameters": {
+      "bucketName": "company-data",
+      "Host": "company-data.s3.us-east-1.amazonaws.com",
+      "key": "finance/budget-2026.xlsx"
+    },
+    "responseElements": null,
+    "requestID": "f5ef0f1e-0456-5a0a-97b2-c4333e1a17b4",
+    "eventID": "f1dbe9a6-9a4f-50fe-8661-8149ddf4c6bf",
+    "readOnly": true,
+    "eventType": "AwsApiCall",
+    "managementEvent": false,
+    "recipientAccountId": "123456789012",
+    "eventCategory": "Data",
+    "additionalEventData": {
+      "SignatureVersion": "SigV4",
+      "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+      "bytesTransferredIn": 0,
+      "bytesTransferredOut": 96210,
+      "AuthenticationMethod": "AuthHeader"
+    }
+  },
+  {
+    "eventVersion": "1.08",
+    "userIdentity": {
+      "type": "IAMUser",
+      "principalId": "AIDACAROLEXAMPLE",
+      "arn": "arn:aws:iam::123456789012:user/carol",
+      "accountId": "123456789012",
+      "userName": "carol"
+    },
+    "eventTime": "2026-10-07T09:30:07Z",
+    "eventSource": "signin.amazonaws.com",
+    "eventName": "ConsoleLogin",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "81.2.69.142",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/118.0",
+    "requestParameters": null,
+    "responseElements": {
+      "ConsoleLogin": "Failure"
+    },
+    "requestID": "2d79bff1-d56e-5003-a6a2-919f776654d9",
+    "eventID": "d98f1738-3ce9-553b-a658-cbecf739a2f0",
+    "readOnly": false,
+    "eventType": "AwsApiCall",
+    "managementEvent": true,
+    "recipientAccountId": "123456789012",
+    "additionalEventData": {
+      "LoginTo": "https://console.aws.amazon.com/console/home?state=hashArgs",
+      "MobileVersion": "No",
+      "MFAUsed": "No"
+    },
+    "errorMessage": "Failed authentication"
+  },
+  {
+    "eventVersion": "1.08",
+    "userIdentity": {
+      "type": "IAMUser",
+      "principalId": "AIDACAROLEXAMPLE",
+      "arn": "arn:aws:iam::123456789012:user/carol",
+      "accountId": "123456789012",
+      "userName": "carol"
+    },
+    "eventTime": "2026-10-07T09:30:09Z",
+    "eventSource": "signin.amazonaws.com",
+    "eventName": "ConsoleLogin",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "81.2.69.142",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/118.0",
+    "requestParameters": null,
+    "responseElements": {
+      "ConsoleLogin": "Success"
+    },
+    "requestID": "7e74fc51-9154-57a6-a126-56677a39cf49",
+    "eventID": "0c010c1a-96a0-5a11-afc2-3262bb147eec",
+    "readOnly": false,
+    "eventType": "AwsApiCall",
+    "managementEvent": true,
+    "recipientAccountId": "123456789012",
+    "additionalEventData": {
+      "LoginTo": "https://console.aws.amazon.com/console/home?state=hashArgs",
+      "MobileVersion": "No",
+      "MFAUsed": "Yes"
+    }
+  },
+  {
+    "eventVersion": "1.08",
+    "userIdentity": {
+      "type": "IAMUser",
+      "principalId": "AIDACAROLEXAMPLE",
+      "arn": "arn:aws:iam::123456789012:user/carol",
+      "accountId": "123456789012",
+      "userName": "carol",
+      "accessKeyId": "AKIAIOSFODNN7CAR003"
+    },
+    "eventTime": "2026-10-07T09:30:10Z",
+    "eventSource": "iam.amazonaws.com",
+    "eventName": "AttachUserPolicy",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "81.2.69.142",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/118.0",
+    "requestParameters": {
+      "userName": "dave",
+      "policyArn": "arn:aws:iam::aws:policy/ReadOnlyAccess"
+    },
+    "responseElements": null,
+    "requestID": "f641d7f6-bad0-575d-bb0c-2ed11a2ef691",
+    "eventID": "39faa4f4-b0de-5cc1-bfe3-8c3ea085c42d",
+    "readOnly": false,
+    "eventType": "AwsApiCall",
+    "managementEvent": true,
+    "recipientAccountId": "123456789012"
+  },
+  {
+    "eventVersion": "1.08",
+    "userIdentity": {
+      "type": "IAMUser",
+      "principalId": "AIDAEVEEXAMPLE",
+      "arn": "arn:aws:iam::123456789012:user/eve",
+      "accountId": "123456789012",
+      "userName": "eve",
+      "accessKeyId": "AKIAIOSFODNN7EVE001"
+    },
+    "eventTime": "2026-10-07T09:30:12Z",
+    "eventSource": "s3.amazonaws.com",
+    "eventName": "ListBuckets",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "49.204.18.33",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/118.0",
+    "requestParameters": null,
+    "responseElements": null,
+    "requestID": "9ca368a2-4eff-56e8-b7b2-1d222cf84bfa",
+    "eventID": "46532252-639c-5a49-ae7b-b612469fb50c",
+    "readOnly": true,
+    "eventType": "AwsApiCall",
+    "managementEvent": true,
+    "recipientAccountId": "123456789012"
+  },
+  {
+    "eventVersion": "1.08",
+    "userIdentity": {
+      "type": "IAMUser",
+      "principalId": "AIDACAROLEXAMPLE",
+      "arn": "arn:aws:iam::123456789012:user/carol",
+      "accountId": "123456789012",
+      "userName": "carol",
+      "accessKeyId": "AKIAIOSFODNN7CAR003"
+    },
+    "eventTime": "2026-10-07T09:30:13Z",
+    "eventSource": "s3.amazonaws.com",
+    "eventName": "GetObject",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "81.2.69.142",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/118.0",
+    "requestParameters": {
+      "bucketName": "company-data",
+      "Host": "company-data.s3.us-east-1.amazonaws.com",
+      "key": "hr/policies/handbook.pdf"
+    },
+    "responseElements": null,
+    "requestID": "634c97f0-9639-57e5-8b18-30128382fc0f",
+    "eventID": "92c478fe-9823-51c1-a4ef-5830f37b0df8",
+    "readOnly": true,
+    "eventType": "AwsApiCall",
+    "managementEvent": false,
+    "recipientAccountId": "123456789012",
+    "eventCategory": "Data",
+    "additionalEventData": {
+      "SignatureVersion": "SigV4",
+      "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+      "bytesTransferredIn": 0,
+      "bytesTransferredOut": 211004,
+      "AuthenticationMethod": "AuthHeader"
+    }
+  },
+  {
+    "eventVersion": "1.08",
+    "userIdentity": {
+      "type": "IAMUser",
+      "principalId": "AIDAEVEEXAMPLE",
+      "arn": "arn:aws:iam::123456789012:user/eve",
+      "accountId": "123456789012",
+      "userName": "eve",
+      "accessKeyId": "AKIAIOSFODNN7EVE001"
+    },
+    "eventTime": "2026-10-07T09:30:15Z",
+    "eventSource": "sts.amazonaws.com",
+    "eventName": "GetCallerIdentity",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "91.240.118.172",
+    "userAgent": "aws-cli/2.13.5 Python/3.11.4 Linux/5.15 exe/x86_64.ubuntu.22 prompt/off",
+    "requestParameters": null,
+    "responseElements": null,
+    "requestID": "1220d388-23c4-56c4-bc73-6e2b01a679bf",
+    "eventID": "bf9b63bc-1609-5d3c-987c-b7094c662563",
+    "readOnly": true,
+    "eventType": "AwsApiCall",
+    "managementEvent": true,
+    "recipientAccountId": "123456789012"
+  },
+  {
+    "eventVersion": "1.08",
+    "userIdentity": {
+      "type": "IAMUser",
+      "principalId": "AIDABOBEXAMPLE",
+      "arn": "arn:aws:iam::123456789012:user/bob",
+      "accountId": "123456789012",
+      "userName": "bob",
+      "accessKeyId": "AKIAIOSFODNN7BOB002"
+    },
+    "eventTime": "2026-10-07T09:30:17Z",
+    "eventSource": "s3.amazonaws.com",
+    "eventName": "GetObject",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "98.45.101.7",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/118.0",
+    "requestParameters": {
+      "bucketName": "company-data",
+      "Host": "company-data.s3.us-east-1.amazonaws.com",
+      "key": "finance/forecast-q4.xlsx"
+    },
+    "responseElements": null,
+    "requestID": "ca81c97a-e193-5aec-9618-2052b7e4deff",
+    "eventID": "18c56566-9d15-5c7e-8cdf-e9c8464cffd2",
+    "readOnly": true,
+    "eventType": "AwsApiCall",
+    "managementEvent": false,
+    "recipientAccountId": "123456789012",
+    "eventCategory": "Data",
+    "additionalEventData": {
+      "SignatureVersion": "SigV4",
+      "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+      "bytesTransferredIn": 0,
+      "bytesTransferredOut": 58233,
+      "AuthenticationMethod": "AuthHeader"
+    }
+  },
+  {
+    "eventVersion": "1.08",
+    "userIdentity": {
+      "type": "IAMUser",
+      "principalId": "AIDABOBEXAMPLE",
+      "arn": "arn:aws:iam::123456789012:user/bob",
+      "accountId": "123456789012",
+      "userName": "bob",
+      "accessKeyId": "AKIAIOSFODNN7BOB002"
+    },
+    "eventTime": "2026-10-07T09:30:18Z",
+    "eventSource": "cloudwatch.amazonaws.com",
+    "eventName": "DescribeAlarms",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "98.45.101.7",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/118.0",
+    "requestParameters": null,
+    "responseElements": null,
+    "requestID": "006ca7f2-8a39-5eaf-b421-e257d2d39791",
+    "eventID": "467c5c1d-9a09-55f2-ac11-2417bf916545",
+    "readOnly": true,
+    "eventType": "AwsApiCall",
+    "managementEvent": true,
+    "recipientAccountId": "123456789012"
+  },
+  {
+    "eventVersion": "1.08",
+    "userIdentity": {
+      "type": "IAMUser",
+      "principalId": "AIDAEVEEXAMPLE",
+      "arn": "arn:aws:iam::123456789012:user/eve",
+      "accountId": "123456789012",
+      "userName": "eve",
+      "accessKeyId": "AKIAIOSFODNN7EVE001"
+    },
+    "eventTime": "2026-10-07T09:30:20Z",
+    "eventSource": "iam.amazonaws.com",
+    "eventName": "ListUsers",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "91.240.118.172",
+    "userAgent": "aws-cli/2.13.5 Python/3.11.4 Linux/5.15 exe/x86_64.ubuntu.22 prompt/off",
+    "requestParameters": null,
+    "responseElements": null,
+    "requestID": "34161b63-ebb0-5052-9cea-24ec6ed4b034",
+    "eventID": "a397739e-aa05-5135-addd-891d063cb6ea",
+    "readOnly": true,
+    "eventType": "AwsApiCall",
+    "managementEvent": true,
+    "recipientAccountId": "123456789012"
+  },
+  {
+    "eventVersion": "1.08",
+    "userIdentity": {
+      "type": "IAMUser",
+      "principalId": "AIDAEVEEXAMPLE",
+      "arn": "arn:aws:iam::123456789012:user/eve",
+      "accountId": "123456789012",
+      "userName": "eve",
+      "accessKeyId": "AKIAIOSFODNN7EVE001"
+    },
+    "eventTime": "2026-10-07T09:30:22Z",
+    "eventSource": "iam.amazonaws.com",
+    "eventName": "CreateAccessKey",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "91.240.118.172",
+    "userAgent": "aws-cli/2.13.5 Python/3.11.4 Linux/5.15 exe/x86_64.ubuntu.22 prompt/off",
+    "requestParameters": {
+      "userName": "eve"
+    },
+    "responseElements": {
+      "accessKey": {
+        "userName": "eve",
+        "accessKeyId": "AKIAIOSFODNN7EVE999",
+        "status": "Active",
+        "createDate": "Oct 7, 2026 9:30:22 AM"
+      }
+    },
+    "requestID": "54ca6248-34b7-5131-80fa-db7135ac7905",
+    "eventID": "4dd3b1ac-676d-5e9f-80e4-198b47ef885d",
+    "readOnly": false,
+    "eventType": "AwsApiCall",
+    "managementEvent": true,
+    "recipientAccountId": "123456789012"
+  },
+  {
+    "eventVersion": "1.08",
+    "userIdentity": {
+      "type": "IAMUser",
+      "principalId": "AIDABOBEXAMPLE",
+      "arn": "arn:aws:iam::123456789012:user/bob",
+      "accountId": "123456789012",
+      "userName": "bob"
+    },
+    "eventTime": "2026-10-07T09:30:24Z",
+    "eventSource": "signin.amazonaws.com",
+    "eventName": "ConsoleLogin",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "98.45.101.7",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/118.0",
+    "requestParameters": null,
+    "responseElements": {
+      "ConsoleLogin": "Success"
+    },
+    "requestID": "93902fd0-b441-5840-81d9-33e0ecbe1b97",
+    "eventID": "421b131d-5225-5954-8655-b75ad9f9e18a",
+    "readOnly": false,
+    "eventType": "AwsApiCall",
+    "managementEvent": true,
+    "recipientAccountId": "123456789012",
+    "additionalEventData": {
+      "LoginTo": "https://console.aws.amazon.com/console/home?state=hashArgs",
+      "MobileVersion": "No",
+      "MFAUsed": "Yes"
+    }
+  },
+  {
+    "eventVersion": "1.08",
+    "userIdentity": {
+      "type": "IAMUser",
+      "principalId": "AIDAEVEEXAMPLE",
+      "arn": "arn:aws:iam::123456789012:user/eve",
+      "accountId": "123456789012",
+      "userName": "eve",
+      "accessKeyId": "AKIAIOSFODNN7EVE001"
+    },
+    "eventTime": "2026-10-07T09:30:26Z",
+    "eventSource": "s3.amazonaws.com",
+    "eventName": "GetObject",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "49.204.18.33",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/118.0",
+    "requestParameters": {
+      "bucketName": "company-data",
+      "Host": "company-data.s3.us-east-1.amazonaws.com",
+      "key": "reports/q3-summary.pdf"
+    },
+    "responseElements": null,
+    "requestID": "b4b2d193-a966-55e6-ad75-57b427536a65",
+    "eventID": "e14ba275-5a52-5ccb-aba1-f3877f660e62",
+    "readOnly": true,
+    "eventType": "AwsApiCall",
+    "managementEvent": false,
+    "recipientAccountId": "123456789012",
+    "eventCategory": "Data",
+    "additionalEventData": {
+      "SignatureVersion": "SigV4",
+      "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+      "bytesTransferredIn": 0,
+      "bytesTransferredOut": 184322,
+      "AuthenticationMethod": "AuthHeader"
+    }
+  },
+  {
+    "eventVersion": "1.08",
+    "userIdentity": {
+      "type": "IAMUser",
+      "principalId": "AIDAEVEEXAMPLE",
+      "arn": "arn:aws:iam::123456789012:user/eve",
+      "accountId": "123456789012",
+      "userName": "eve",
+      "accessKeyId": "AKIAIOSFODNN7EVE001"
+    },
+    "eventTime": "2026-10-07T09:30:28Z",
+    "eventSource": "iam.amazonaws.com",
+    "eventName": "AttachUserPolicy",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "91.240.118.172",
+    "userAgent": "aws-cli/2.13.5 Python/3.11.4 Linux/5.15 exe/x86_64.ubuntu.22 prompt/off",
+    "requestParameters": {
+      "userName": "eve",
+      "policyArn": "arn:aws:iam::aws:policy/AdministratorAccess"
+    },
+    "responseElements": null,
+    "requestID": "629eb07f-dcee-56b0-b452-09cf88e8b39e",
+    "eventID": "74931d72-a217-5c15-88b0-c365f860d017",
+    "readOnly": false,
+    "eventType": "AwsApiCall",
+    "managementEvent": true,
+    "recipientAccountId": "123456789012"
+  },
+  {
+    "eventVersion": "1.08",
+    "userIdentity": {
+      "type": "IAMUser",
+      "principalId": "AIDACAROLEXAMPLE",
+      "arn": "arn:aws:iam::123456789012:user/carol",
+      "accountId": "123456789012",
+      "userName": "carol",
+      "accessKeyId": "AKIAIOSFODNN7CAR003"
+    },
+    "eventTime": "2026-10-07T09:30:31Z",
+    "eventSource": "s3.amazonaws.com",
+    "eventName": "GetObject",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "81.2.69.142",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/118.0",
+    "requestParameters": {
+      "bucketName": "company-data",
+      "Host": "company-data.s3.us-east-1.amazonaws.com",
+      "key": "hr/org-chart.png"
+    },
+    "responseElements": null,
+    "requestID": "2a450b44-1e8a-5bf5-9a93-1566ed4eba51",
+    "eventID": "4a03fde0-bad5-556d-9e22-9d215ea0712a",
+    "readOnly": true,
+    "eventType": "AwsApiCall",
+    "managementEvent": false,
+    "recipientAccountId": "123456789012",
+    "eventCategory": "Data",
+    "additionalEventData": {
+      "SignatureVersion": "SigV4",
+      "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+      "bytesTransferredIn": 0,
+      "bytesTransferredOut": 340112,
+      "AuthenticationMethod": "AuthHeader"
+    }
+  },
+  {
+    "eventVersion": "1.08",
+    "userIdentity": {
+      "type": "IAMUser",
+      "principalId": "AIDAEVEEXAMPLE",
+      "arn": "arn:aws:iam::123456789012:user/eve",
+      "accountId": "123456789012",
+      "userName": "eve",
+      "accessKeyId": "AKIAIOSFODNN7EVE001"
+    },
+    "eventTime": "2026-10-07T09:30:34Z",
+    "eventSource": "cloudtrail.amazonaws.com",
+    "eventName": "StopLogging",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "91.240.118.172",
+    "userAgent": "aws-cli/2.13.5 Python/3.11.4 Linux/5.15 exe/x86_64.ubuntu.22 prompt/off",
+    "requestParameters": {
+      "name": "arn:aws:cloudtrail:us-east-1:123456789012:trail/company-trail"
+    },
+    "responseElements": null,
+    "requestID": "2ccf7b84-75b6-521b-b73b-0bddcb453a39",
+    "eventID": "963aedd5-0ee1-513e-a0a5-0576ff311f57",
+    "readOnly": false,
+    "eventType": "AwsApiCall",
+    "managementEvent": true,
+    "recipientAccountId": "123456789012"
+  },
+  {
+    "eventVersion": "1.08",
+    "userIdentity": {
+      "type": "IAMUser",
+      "principalId": "AIDABOBEXAMPLE",
+      "arn": "arn:aws:iam::123456789012:user/bob",
+      "accountId": "123456789012",
+      "userName": "bob",
+      "accessKeyId": "AKIAIOSFODNN7BOB002"
+    },
+    "eventTime": "2026-10-07T09:30:37Z",
+    "eventSource": "s3.amazonaws.com",
+    "eventName": "GetObject",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "98.45.101.7",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/118.0",
+    "requestParameters": {
+      "bucketName": "company-data",
+      "Host": "company-data.s3.us-east-1.amazonaws.com",
+      "key": "finance/budget-2026.xlsx"
+    },
+    "responseElements": null,
+    "requestID": "ac53e9fe-ed68-5a95-93eb-a8b17fb3bfa7",
+    "eventID": "14be81f1-46d1-5fd2-9c39-19fd6dfd41db",
+    "readOnly": true,
+    "eventType": "AwsApiCall",
+    "managementEvent": false,
+    "recipientAccountId": "123456789012",
+    "eventCategory": "Data",
+    "additionalEventData": {
+      "SignatureVersion": "SigV4",
+      "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+      "bytesTransferredIn": 0,
+      "bytesTransferredOut": 96210,
+      "AuthenticationMethod": "AuthHeader"
+    }
+  },
+  {
+    "eventVersion": "1.08",
+    "userIdentity": {
+      "type": "IAMUser",
+      "principalId": "AIDAEVEEXAMPLE",
+      "arn": "arn:aws:iam::123456789012:user/eve",
+      "accountId": "123456789012",
+      "userName": "eve",
+      "accessKeyId": "AKIAIOSFODNN7EVE001"
+    },
+    "eventTime": "2026-10-07T09:30:40Z",
+    "eventSource": "s3.amazonaws.com",
+    "eventName": "GetObject",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "91.240.118.172",
+    "userAgent": "aws-cli/2.13.5 Python/3.11.4 Linux/5.15 exe/x86_64.ubuntu.22 prompt/off",
+    "requestParameters": {
+      "bucketName": "company-data",
+      "Host": "company-data.s3.us-east-1.amazonaws.com",
+      "key": "exports/customers-full-2026-10.csv.gz"
+    },
+    "responseElements": null,
+    "requestID": "578dc462-e05c-5250-be75-ac5d9f21ae44",
+    "eventID": "e8b16369-7df4-5b74-86ba-c70fc4a87c1f",
+    "readOnly": true,
+    "eventType": "AwsApiCall",
+    "managementEvent": false,
+    "recipientAccountId": "123456789012",
+    "eventCategory": "Data",
+    "additionalEventData": {
+      "SignatureVersion": "SigV4",
+      "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+      "bytesTransferredIn": 0,
+      "bytesTransferredOut": 734003200,
+      "AuthenticationMethod": "AuthHeader"
+    }
+  },
+  {
+    "eventVersion": "1.08",
+    "userIdentity": {
+      "type": "IAMUser",
+      "principalId": "AIDAEVEEXAMPLE",
+      "arn": "arn:aws:iam::123456789012:user/eve",
+      "accountId": "123456789012",
+      "userName": "eve",
+      "accessKeyId": "AKIAIOSFODNN7EVE001"
+    },
+    "eventTime": "2026-10-07T09:30:42Z",
+    "eventSource": "s3.amazonaws.com",
+    "eventName": "GetObject",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "91.240.118.172",
+    "userAgent": "aws-cli/2.13.5 Python/3.11.4 Linux/5.15 exe/x86_64.ubuntu.22 prompt/off",
+    "requestParameters": {
+      "bucketName": "company-data",
+      "Host": "company-data.s3.us-east-1.amazonaws.com",
+      "key": "exports/orders-archive.tar.gz"
+    },
+    "responseElements": null,
+    "requestID": "e1275b42-7e2d-5c5c-825a-e4219f9e4536",
+    "eventID": "df0f5517-80a6-5216-a8bc-54f99c7d3aad",
+    "readOnly": true,
+    "eventType": "AwsApiCall",
+    "managementEvent": false,
+    "recipientAccountId": "123456789012",
+    "eventCategory": "Data",
+    "additionalEventData": {
+      "SignatureVersion": "SigV4",
+      "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+      "bytesTransferredIn": 0,
+      "bytesTransferredOut": 612368384,
+      "AuthenticationMethod": "AuthHeader"
+    }
+  },
+  {
+    "eventVersion": "1.08",
+    "userIdentity": {
+      "type": "IAMUser",
+      "principalId": "AIDAEVEEXAMPLE",
+      "arn": "arn:aws:iam::123456789012:user/eve",
+      "accountId": "123456789012",
+      "userName": "eve",
+      "accessKeyId": "AKIAIOSFODNN7EVE001"
+    },
+    "eventTime": "2026-10-07T09:30:44Z",
+    "eventSource": "s3.amazonaws.com",
+    "eventName": "GetObject",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "91.240.118.172",
+    "userAgent": "aws-cli/2.13.5 Python/3.11.4 Linux/5.15 exe/x86_64.ubuntu.22 prompt/off",
+    "requestParameters": {
+      "bucketName": "company-data",
+      "Host": "company-data.s3.us-east-1.amazonaws.com",
+      "key": "backups/db-snapshot-prod.sql.gz"
+    },
+    "responseElements": null,
+    "requestID": "2ebdc797-a006-5374-97f3-b352edc34b1e",
+    "eventID": "d12066d3-548c-5c6d-9057-be6cc8f720b8",
+    "readOnly": true,
+    "eventType": "AwsApiCall",
+    "managementEvent": false,
+    "recipientAccountId": "123456789012",
+    "eventCategory": "Data",
+    "additionalEventData": {
+      "SignatureVersion": "SigV4",
+      "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+      "bytesTransferredIn": 0,
+      "bytesTransferredOut": 905969664,
+      "AuthenticationMethod": "AuthHeader"
+    }
+  },
+  {
+    "eventVersion": "1.08",
+    "userIdentity": {
+      "type": "IAMUser",
+      "principalId": "AIDACAROLEXAMPLE",
+      "arn": "arn:aws:iam::123456789012:user/carol",
+      "accountId": "123456789012",
+      "userName": "carol"
+    },
+    "eventTime": "2026-10-07T09:30:46Z",
+    "eventSource": "signin.amazonaws.com",
+    "eventName": "ConsoleLogin",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "81.2.69.142",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/118.0",
+    "requestParameters": null,
+    "responseElements": {
+      "ConsoleLogin": "Success"
+    },
+    "requestID": "4b816a71-630c-5238-9f09-b0f8a2de1060",
+    "eventID": "9d09d85b-741a-51ff-b3d2-24ba011aafe9",
+    "readOnly": false,
+    "eventType": "AwsApiCall",
+    "managementEvent": true,
+    "recipientAccountId": "123456789012",
+    "additionalEventData": {
+      "LoginTo": "https://console.aws.amazon.com/console/home?state=hashArgs",
+      "MobileVersion": "No",
+      "MFAUsed": "Yes"
+    }
+  },
+  {
+    "eventVersion": "1.08",
+    "userIdentity": {
+      "type": "IAMUser",
+      "principalId": "AIDACAROLEXAMPLE",
+      "arn": "arn:aws:iam::123456789012:user/carol",
+      "accountId": "123456789012",
+      "userName": "carol",
+      "accessKeyId": "AKIAIOSFODNN7CAR003"
+    },
+    "eventTime": "2026-10-07T09:30:48Z",
+    "eventSource": "s3.amazonaws.com",
+    "eventName": "GetObject",
+    "awsRegion": "us-east-1",
+    "sourceIPAddress": "81.2.69.142",
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/118.0",
+    "requestParameters": {
+      "bucketName": "company-data",
+      "Host": "company-data.s3.us-east-1.amazonaws.com",
+      "key": "hr/policies/handbook.pdf"
+    },
+    "responseElements": null,
+    "requestID": "bf50a3bf-01a5-5c0b-af79-0b9755f6d85b",
+    "eventID": "4eaf344a-dc98-5897-bbcf-653b228cc3da",
+    "readOnly": true,
+    "eventType": "AwsApiCall",
+    "managementEvent": false,
+    "recipientAccountId": "123456789012",
+    "eventCategory": "Data",
+    "additionalEventData": {
+      "SignatureVersion": "SigV4",
+      "CipherSuite": "ECDHE-RSA-AES128-GCM-SHA256",
+      "bytesTransferredIn": 0,
+      "bytesTransferredOut": 211004,
+      "AuthenticationMethod": "AuthHeader"
+    }
+  }
+]

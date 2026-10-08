@@ -1,0 +1,71 @@
+{
+  "185.220.101.45": {
+    "reputation": "malicious",
+    "score": 95,
+    "tags": [
+      "tor-exit-node",
+      "brute-force"
+    ],
+    "last_seen": "2026-10-05",
+    "source": "mock-feed"
+  },
+  "45.155.205.233": {
+    "reputation": "suspicious",
+    "score": 70,
+    "tags": [
+      "credential-stuffing",
+      "vps-hosting"
+    ],
+    "last_seen": "2026-10-03",
+    "source": "mock-feed"
+  },
+  "103.75.190.12": {
+    "reputation": "malicious",
+    "score": 90,
+    "tags": [
+      "botnet-c2",
+      "scanner"
+    ],
+    "last_seen": "2026-10-06",
+    "source": "mock-feed"
+  },
+  "196.251.88.21": {
+    "reputation": "malicious",
+    "score": 88,
+    "tags": [
+      "brute-force",
+      "known-attacker"
+    ],
+    "last_seen": "2026-10-04",
+    "source": "mock-feed"
+  },
+  "73.12.4.21": {
+    "reputation": "clean",
+    "score": 0,
+    "tags": [
+      "residential-isp"
+    ],
+    "last_seen": null,
+    "source": "mock-feed"
+  },
+  "81.2.69.142": {
+    "reputation": "clean",
+    "score": 0,
+    "tags": [
+      "residential-isp"
+    ],
+    "last_seen": null,
+    "source": "mock-feed"
+  },
+  "91.240.118.172": {
+    "reputation": "malicious",
+    "score": 93,
+    "tags": [
+      "stolen-credentials",
+      "aws-access-key-abuse",
+      "vps-hosting"
+    ],
+    "last_seen": "2026-10-06",
+    "source": "mock-feed"
+  }
+}
